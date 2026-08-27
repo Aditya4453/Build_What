@@ -1,5 +1,11 @@
 import intents from "@/data/intents.json";
 export async function GET() {
-  const documents = intents["ownership-transfer"].documents.map((name, index) => ({ name, status: index === 3 ? "needs-attention" : "validated", detail: index === 3 ? "Address proof is unclear. Upload a clearer copy." : "File format and details verified." }));
-  return Response.json({ applicationId: "PP-2026-08142", documents });
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  const documents = intents["ownership-transfer"].documents.map((name, index) => ({
+    name,
+    status: index === 3 ? "needs-attention" : "validated",
+    detail: index === 3 ? "Address proof is unclear. Upload a clearer copy." : "File format and details verified.",
+    checks: index === 3 ? ["File format verified", "Document image detected"] : ["File format verified", "Signature present", "Application details match"],
+  }));
+  return Response.json({ applicationId: "PP-2026-08142", status: "approved", documents });
 }
