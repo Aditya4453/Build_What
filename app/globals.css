@@ -4,6 +4,13 @@
 
 * { box-sizing: border-box; }
 body { margin: 0; background: #f9f9ff; color: #111c2c; font-family: Arial, Helvetica, sans-serif; }
+[data-theme="dark"] body { background: #101926; color: #e9eff9; }
+[data-theme="dark"] .bg-surface, [data-theme="dark"] .bg-white { background-color: #162234 !important; }
+[data-theme="dark"] .bg-surface-low, [data-theme="dark"] .bg-surface-container { background-color: #203047 !important; }
+[data-theme="dark"] .text-ink, [data-theme="dark"] .text-primary { color: #c8dbff; }
+[data-theme="dark"] .text-muted, [data-theme="dark"] .text-outline { color: #bcc7d8; }
+[data-theme="dark"] .card { background: #162234; border-color: #4c5d77; }
+[data-theme="dark"] .border-outline-variant, [data-theme="dark"] .border-outline-variant\/40, [data-theme="dark"] .border-outline-variant\/50, [data-theme="dark"] .border-outline-variant\/60, [data-theme="dark"] .border-outline-variant\/70 { border-color: #4c5d77; }
 button, input { font: inherit; }
 button:focus-visible, input:focus-visible, a:focus-visible, label:focus-within { outline: 3px solid #13696a; outline-offset: 3px; }
 .card { @apply rounded-lg border border-outline-variant/60 bg-white; }
