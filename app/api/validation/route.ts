@@ -1,6 +1,9 @@
 import intents from "@/data/intents.json";
 export async function GET() {
   await new Promise((resolve) => setTimeout(resolve, 500));
+  if (Math.random() < 0.1) {
+    return Response.json({ applicationId: "PP-2026-08142", status: "rejected", retryable: true, documents: [] });
+  }
   const documents = intents["ownership-transfer"].documents.map((name, index) => ({
     name,
     status: index === 3 ? "needs-attention" : "validated",
