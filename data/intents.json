@@ -1,0 +1,24 @@
+{
+  "ownership-transfer": {
+    "label": "Vehicle Ownership Transfer",
+    "description": "Transfer a vehicle into the buyer’s name after a sale.",
+    "questions": [
+      { "id": "vehicle", "label": "What is the vehicle registration number?", "placeholder": "e.g. DL 01 AB 1234" },
+      { "id": "state", "label": "Which state is the vehicle currently registered in?", "options": ["Delhi", "Maharashtra", "Karnataka", "Tamil Nadu", "Other"] },
+      { "id": "loan", "label": "Is there an active loan on the vehicle?", "options": ["Yes, it is financed", "No, the loan is cleared"] }
+    ],
+    "plan": ["Verify the vehicle and buyer details", "Prepare Forms 29 and 30", "Upload transfer documents", "Pay the transfer fee", "Receive the updated registration certificate"],
+    "documents": ["Registration Certificate (RC)", "Valid insurance certificate", "PUC certificate", "Buyer identity and address proof", "Seller identity proof"]
+  },
+  "license-renewal": {
+    "label": "Driving Licence Renewal",
+    "description": "Renew your driving licence before or after expiry.",
+    "questions": [
+      { "id": "licence", "label": "What is your driving licence number?", "placeholder": "Enter licence number" },
+      { "id": "state", "label": "Which state issued your licence?", "options": ["Delhi", "Maharashtra", "Karnataka", "Tamil Nadu", "Other"] },
+      { "id": "expired", "label": "Has your licence already expired?", "options": ["Yes", "No"] }
+    ],
+    "plan": ["Confirm your licence record", "Complete the renewal application", "Upload identity and medical documents", "Pay the renewal fee", "Receive your renewed licence"],
+    "documents": ["Current driving licence", "Address proof", "Recent passport photograph", "Medical certificate (if applicable)"]
+  }
+}
