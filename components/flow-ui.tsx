@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BadgeCheck, Check, ChevronRight, Clock3, FileText, LockKeyhole, RefreshCw, UploadCloud, AlertCircle } from "lucide-react";
 import intents from "@/data/intents.json";
@@ -116,16 +116,12 @@ export function Landing() {
           {t.common}
         </p>
         <div className="flex flex-wrap justify-center gap-2">
-          {["Transfer ownership", "Renew license", "Replace / download RC", "Pay a challan"].map((x) => (
-            <button
-              aria-label={`Start ${x}`}
-              key={x}
-              onClick={() => start(x)}
-              className="rounded-full border border-outline-variant/60 bg-surface-low text-xs font-semibold text-primary transition-all hover:bg-surface-container hover:border-outline btn-task"
-            >
-              {x}
-            </button>
-          ))}
+          {["Transfer ownership", "Renew license", "Replace / download RC", "Pay a challan"].map((x) => {
+            const comingSoon = x === "Replace / download RC" || x === "Pay a challan";
+            return <button aria-label={comingSoon ? `${x} coming soon` : `Start ${x}`} key={x} disabled={comingSoon} onClick={() => !comingSoon && start(x)} className="rounded-full border border-outline-variant/60 bg-surface-low text-xs font-semibold text-primary transition-all hover:bg-surface-container hover:border-outline btn-task disabled:cursor-not-allowed disabled:opacity-45">
+              {x}{comingSoon ? " · Coming soon" : ""}
+            </button>;
+          })}
         </div>
       </div>
     </section>
@@ -348,6 +344,9 @@ export function Review() {
   const [verified, setVerified] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const missingAnswers = item.questions.filter((question) => !f.answers[question.id]?.trim());
+  const missingDocuments = item.documents.filter((document) => !f.uploads[document]?.trim());
+  const looksReady = missingAnswers.length === 0 && missingDocuments.length === 0;
 
   const handleSubmit = async () => {
     if (!f.citizen) {
@@ -360,7 +359,7 @@ export function Review() {
       const response = await fetch("/api/applications/submit", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ answers: f.answers, uploads: f.uploads }),
+        body: JSON.stringify({ intent: f.intent, answers: f.answers, uploads: f.uploads }),
       });
       if (!response.ok) {
         throw new Error("Failed to submit");
@@ -368,18 +367,10 @@ export function Review() {
       const resData = await response.json();
       if (resData.applicationId) {
         f.setApplicationId(resData.applicationId);
+        f.setPaymentReference(`PP-PAY-${resData.applicationId}`);
+        f.setPaymentStatus("pending");
       }
-      const meResponse = await fetch("/api/me");
-      if (meResponse.ok) {
-        const meData = await meResponse.json();
-        if (meData.context?.payment?.transactionReference) {
-          f.setPaymentReference(meData.context.payment.transactionReference);
-        }
-        if (meData.context?.payment?.status) {
-          f.setPaymentStatus(meData.context.payment.status);
-        }
-      }
-      r.push("/payment");
+      r.push(`/payment?id=${encodeURIComponent(resData.applicationId || f.applicationId)}`);
     } catch {
       setSubmitError("Could not save application details. Please try again.");
     } finally {
@@ -388,8 +379,8 @@ export function Review() {
   };
 
   return (
-    <Step number="Final review" title="Double check all details">
-      <p className="text-sm text-outline">Ensure accuracy before final submission to MongoDB.</p>
+    <Step number="Final review" title="Review and validate">
+      <p className="text-sm text-outline">Check the information before submitting this prototype application.</p>
 
       <div className="card mt-6 p-6 space-y-5">
         <h2 className="text-base font-bold text-primary border-b border-outline-variant/40 pb-2">{item.label}</h2>
@@ -420,6 +411,9 @@ export function Review() {
           </ul>
         </div>
 
+        <div className={`rounded-xl border p-4 text-xs ${looksReady ? "border-secondary/30 bg-secondary/5" : "border-[#f2b8b5] bg-[#ffe4e1]"}`}>
+          {looksReady ? <><p className="font-bold text-primary">Looks ready to submit</p><p className="mt-1 text-outline">We found no common issues in this prototype check.</p><p className="mt-2 font-semibold text-outline">Prototype check only — this does not constitute official government verification.</p></> : <><p className="font-bold text-primary">Needs attention</p><ul className="mt-2 space-y-1 text-outline">{missingAnswers.map((question) => <li key={question.id}>{question.label} is needed to prepare this application. <Link className="font-bold text-secondary underline" href="/questions">Fix this</Link></li>)}{missingDocuments.map((document) => <li key={document}>{document} is needed for this application. <Link className="font-bold text-secondary underline" href="/upload">Fix this</Link></li>)}</ul></>}
+        </div>
         <TurnstileDemo onVerified={setVerified} />
       </div>
 
@@ -430,13 +424,14 @@ export function Review() {
       )}
 
       <button
-        disabled={!verified || submitting}
+        disabled={!verified || !looksReady || submitting}
         onClick={handleSubmit}
         className="btn-primary mt-6 text-xs w-full py-2.5"
       >
         {submitting ? "Saving..." : f.citizen ? "Submit & pay" : "Sign in to submit"}
         <ChevronRight size={14} />
       </button>
+      <p className="mt-4 text-center text-[10px] font-semibold uppercase tracking-wider text-outline">Prototype for demonstration only · Uses synthetic data · Not an official Parivahan service</p>
     </Step>
   );
 }
@@ -445,50 +440,49 @@ type ApplicationStatus = "queued" | "processing" | "approved" | "rejected";
 
 export function Track() {
   const r = useRouter();
+  const searchParams = useSearchParams();
   const f = useFlow();
   const [status, setStatus] = useState<ApplicationStatus>("queued");
   const [attempt, setAttempt] = useState(0);
+  const [currentStep, setCurrentStep] = useState("Submitted information");
+  const [nextAction, setNextAction] = useState("Confirm demo payment");
+  const [loadError, setLoadError] = useState(false);
+  const applicationId = searchParams.get("id") || f.applicationId;
 
   useEffect(() => {
     setStatus("queued");
-    const processing = window.setTimeout(() => setStatus("processing"), 450);
-    const result = window.setTimeout(async () => {
-      try {
-        const response = await fetch(`/api/application-status?attempt=${attempt}`);
+    setLoadError(false);
+    fetch(`/api/application-status?id=${encodeURIComponent(applicationId)}`)
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Status unavailable");
         const payload = await response.json();
-        setStatus(payload.status);
-      } catch {
-        setStatus("rejected");
-      }
-    }, 1000);
-    return () => {
-      clearTimeout(processing);
-      clearTimeout(result);
-    };
-  }, [attempt]);
+        setCurrentStep(payload.currentStep);
+        setNextAction(payload.nextAction);
+        setStatus(payload.status === "approved" ? "approved" : payload.status === "rejected" ? "rejected" : "processing");
+      })
+      .catch(() => { setLoadError(true); setStatus("rejected"); });
+  }, [applicationId, attempt]);
 
   const retry = () => setAttempt((a) => a + 1);
 
   const descriptions = {
     queued: "Your application is safely queued. Next: payment and document checks.",
-    processing: "Where you are: RTO processing. Checking uploaded documentation. Next: appointment scheduling.",
-    approved: "Your application is approved. Next: licence publication and dispatch.",
-    rejected: "A temporary review issue occurred. Your original submission is safe. Actions: retry review check."
+    processing: "Your submitted information is being reviewed in this prototype.",
+    approved: "Simulated: prototype check complete.",
+    rejected: "We couldn't update your status. Your existing application is still unchanged."
   };
 
   const steps = [
-    "Application submitted",
-    "Payment confirmed",
-    "Document verification",
-    "RTO processing",
-    "Appointment / next step",
-    "Licence issued"
+    "Information submitted",
+    "Demo payment",
+    "Prototype consistency check",
+    "Next step available"
   ];
 
-  const active = status === "queued" ? 0 : status === "processing" ? 3 : 5;
+  const active = status === "queued" ? 0 : status === "processing" ? 2 : 3;
 
   return (
-    <Step number={`Application ID: ${f.applicationId}`} title="Track application progress">
+    <Step number={`Application ID: ${applicationId}`} title="Track application progress">
       <div className="card mt-3 p-6 space-y-6" aria-live="polite">
 
         {/* Status Callout Banner */}
@@ -500,7 +494,7 @@ export function Track() {
         >
           <Clock3 aria-hidden="true" className="shrink-0 mt-0.5" size={16} />
           <div>
-            <p className="font-bold text-xs uppercase tracking-wider">Status: {status}</p>
+            <p className="font-bold text-xs uppercase tracking-wider">Status: {status === "approved" ? "Simulated: prototype check complete" : status}</p>
             <p className="text-xs leading-relaxed text-outline/90 mt-1">{descriptions[status]}</p>
             <p className="mt-2 text-xs font-bold text-primary">Payment: {f.paymentStatus.replaceAll("-", " ")}</p>
           </div>
@@ -524,7 +518,7 @@ export function Track() {
                   >
                     {isComplete ? <Check size={13} /> : i + 1}
                   </span>
-                  {i < 5 && (
+                  {i < steps.length - 1 && (
                     <span className={`h-8 w-px ${i < active ? "bg-secondary" : "bg-outline-variant"}`} />
                   )}
                 </div>
@@ -545,28 +539,36 @@ export function Track() {
           })}
         </div>
 
-        {status === "rejected" && (
+        {loadError && (
           <button
             onClick={retry}
             className="btn-primary text-xs w-full py-2.5"
-            aria-label="Retry application review"
+            aria-label="Retry application status check"
           >
-            <RefreshCw size={13} /> Retry review
+            <RefreshCw size={13} /> Retry status check
           </button>
         )}
       </div>
 
       <div className="mt-6 flex flex-col gap-2.5 sm:flex-row">
-        <button onClick={() => r.push("/validation")} className="btn-secondary text-xs flex-1 py-2.5">
+        <button onClick={() => r.push(`/validation?id=${encodeURIComponent(applicationId)}`)} className="btn-secondary text-xs flex-1 py-2.5">
           View document validation
           <ChevronRight size={13} />
         </button>
         {f.paymentStatus !== "success" && (
-          <button onClick={() => r.push("/payment")} className="btn-secondary text-xs flex-1 py-2.5">
+          <button onClick={() => r.push(`/payment?id=${encodeURIComponent(applicationId)}`)} className="btn-secondary text-xs flex-1 py-2.5">
             Check payment status
           </button>
         )}
       </div>
+      <div className="card mt-4 p-5 text-xs leading-relaxed">
+        <p><strong>WHAT:</strong> Your submitted information is being reviewed in this prototype.</p>
+        <p className="mt-2"><strong>WHY:</strong> Current stage: {currentStep}.</p>
+        <p className="mt-2"><strong>NEXT:</strong> {nextAction}.</p>
+        <p className="mt-2"><strong>ACTION NEEDED:</strong> {f.paymentStatus === "success" ? "No" : "Yes — confirm the demo payment."}</p>
+        {loadError && <p className="mt-3 font-semibold text-[#b3261e]">Retrying checks your existing application. It does not create a new application.</p>}
+      </div>
+      <p className="mt-4 text-center text-[10px] font-semibold uppercase tracking-wider text-outline">Prototype for demonstration only · Uses synthetic data · Not an official Parivahan service</p>
     </Step>
   );
 }
@@ -580,9 +582,11 @@ type ValidationDoc = {
 
 export function Validation() {
   const f = useFlow();
+  const searchParams = useSearchParams();
   const [status, setStatus] = useState<ApplicationStatus>("queued");
   const [docs, setDocs] = useState<ValidationDoc[]>([]);
   const [attempt, setAttempt] = useState(0);
+  const applicationId = searchParams.get("id") || f.applicationId;
 
   useEffect(() => {
     setStatus("queued");
@@ -590,7 +594,8 @@ export function Validation() {
     const processing = window.setTimeout(() => setStatus("processing"), 350);
     const load = window.setTimeout(async () => {
       try {
-        const result = await fetch(`/api/validation?attempt=${attempt}`);
+        const result = await fetch(`/api/validation?id=${encodeURIComponent(applicationId)}`);
+        if (!result.ok) throw new Error("Validation unavailable");
         const payload = await result.json();
         setDocs(payload.documents);
         setStatus(payload.status);
@@ -602,7 +607,7 @@ export function Validation() {
       clearTimeout(processing);
       clearTimeout(load);
     };
-  }, [attempt]);
+  }, [applicationId, attempt]);
 
   return (
     <Step number="Document validation" title="Document checks timeline">

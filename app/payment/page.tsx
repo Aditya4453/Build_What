@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Check, RefreshCw } from "lucide-react";
 import { Shell } from "@/components/shell";
 import { PaymentStatus, useFlow } from "@/components/flow-provider";
@@ -30,13 +31,16 @@ const copy: Record<PaymentStatus, { title: string; description: string }> = {
 
 export default function Page() {
   const f = useFlow();
+  const searchParams = useSearchParams();
   const [attempt, setAttempt] = useState(0);
+  const applicationId = searchParams.get("id") || f.applicationId;
 
   useEffect(() => {
     if (f.paymentStatus !== "processing") return;
     const id = window.setTimeout(async () => {
       try {
-        const response = await fetch(`/api/payment?attempt=${attempt}`);
+        const response = await fetch(`/api/payment?id=${encodeURIComponent(applicationId)}`, { method: "POST" });
+        if (!response.ok) throw new Error("Payment unavailable");
         const data = await response.json();
         f.setPaymentStatus(data.status);
       } catch {
@@ -44,7 +48,7 @@ export default function Page() {
       }
     }, 700);
     return () => clearTimeout(id);
-  }, [attempt, f]);
+  }, [applicationId, attempt, f]);
 
   const retry = () => {
     f.setPaymentStatus("processing");
@@ -60,7 +64,7 @@ export default function Page() {
         className="mx-auto flex min-h-[calc(100vh-140px)] max-w-lg flex-col justify-center px-6 py-10"
       >
         <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-secondary">
-          Application: {f.applicationId}
+          Application: {applicationId}
         </p>
         <h1 id="payment-title" className="mt-1 text-2xl font-bold tracking-tight text-primary">
           Fee Payment
@@ -102,7 +106,7 @@ export default function Page() {
           )}
 
           {f.paymentStatus === "success" && (
-            <a href="/track" className="btn-primary w-full py-2.5 text-xs">
+            <a href={`/track?id=${encodeURIComponent(applicationId)}`} className="btn-primary w-full py-2.5 text-xs">
               <Check size={14} /> Continue to application
             </a>
           )}

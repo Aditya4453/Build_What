@@ -85,7 +85,7 @@ export default function Page() {
               </p>
               
               <div className="pt-2">
-                <Link href="/track" className="btn-primary py-2 px-4.5 text-xs inline-block">
+                <Link href={`/track?id=${encodeURIComponent(app.id)}`} className="btn-primary py-2 px-4.5 text-xs inline-block">
                   Reopen application
                 </Link>
               </div>

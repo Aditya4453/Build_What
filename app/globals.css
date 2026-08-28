@@ -1,17 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   
   /* Light Theme Colors */
-  --color-primary: #0b1529; /* Dark navy primary text/elements */
+  --color-primary: #002045; /* Deep navy primary text/elements */
   --color-primary-container: #1b2d4a; /* Lighter primary container */
-  --color-secondary: #0d9488; /* Calm teal/emerald welcome accent */
-  --color-surface: #f8fafc; /* Page Background gradient base */
+  --color-secondary: #13696A; /* Calm civic teal accent */
+  --color-surface: #F9F9FF; /* Page background */
   --color-surface-low: #ffffff; /* Page Card background */
   --color-surface-container: #f1f5f9; /* Subtle input background */
   --color-outline: #64748b; /* Slate 500 secondary text */
@@ -20,8 +20,8 @@
   --color-muted: #475569; /* Slate 600 secondary layout text */
 
   /* Additional Custom Tokens */
-  --bg-page: #f8fafc;
-  --bg-gradient: radial-gradient(ellipse at top, rgba(147, 197, 253, 0.25), transparent 70%);
+  --bg-page: #F9F9FF;
+  --bg-gradient: none;
   --bg-card: #ffffff;
   --border-card: #f1f5f9;
   --shadow-card: 0 4px 20px -2px rgba(11, 21, 41, 0.03), 0 2px 8px -1px rgba(11, 21, 41, 0.02);
@@ -32,7 +32,7 @@
   /* Dark Theme Colors */
   --color-primary: #f8fafc; /* Near white primary text */
   --color-primary-container: #e2e8f0;
-  --color-secondary: #0ea5e9; /* Cyan / Blue highlight accent */
+  --color-secondary: #13696A; /* Keep the civic accent consistent */
   --color-surface: #030712; /* Deep dark page background */
   --color-surface-low: #0f172a; /* Slightly lighter dark card base */
   --color-surface-container: #1e293b; /* Input elements background */
@@ -43,7 +43,7 @@
 
   /* Additional Custom Tokens */
   --bg-page: #030712;
-  --bg-gradient: radial-gradient(ellipse at top, rgba(14, 165, 233, 0.12), transparent 70%);
+  --bg-gradient: none;
   --bg-card: #0f172a;
   --border-card: #1e293b;
   --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
