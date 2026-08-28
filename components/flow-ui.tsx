@@ -1,4 +1,5 @@
 "use client";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -7,17 +8,671 @@ import intents from "@/data/intents.json";
 import { requirementFor, validateAnswer } from "@/data/forms";
 import { useFlow } from "./flow-provider";
 import { TurnstileDemo } from "./turnstile-demo";
+
 const data = intents as typeof intents;
-const copy = { en: { welcome:"WELCOME TO PARIVAHAN PATH", title:"What do you need to do today?", description:"Tell us what you need in your own words. We’ll find the right service and guide you step by step.", placeholder:"e.g. I bought a second-hand car and want to transfer it.", start:"Start", common:"Common tasks", identified:"Identified service", help:"I can help with that.", continue:"Yes, continue", another:"Choose another service" }, hi: { welcome:"परिवहन पथ में आपका स्वागत है", title:"आज आप क्या करना चाहते हैं?", description:"अपनी ज़रूरत अपने शब्दों में बताइए। हम सही सेवा ढूँढकर कदम-दर-कदम मदद करेंगे।", placeholder:"उदा. मैंने पुरानी कार खरीदी है और स्वामित्व स्थानांतरित करना चाहता हूँ।", start:"शुरू करें", common:"सामान्य कार्य", identified:"पहचानी गई सेवा", help:"मैं इसमें आपकी मदद कर सकता हूँ।", continue:"हाँ, आगे बढ़ें", another:"दूसरी सेवा चुनें" } };
-export function Step({ number, title, children }: { number:string; title:string; children:React.ReactNode }) { return <section aria-labelledby="page-title" className="mx-auto flex min-h-[calc(100vh-120px)] max-w-3xl flex-col justify-center px-4 py-12"><p className="mb-2 text-xs font-bold uppercase tracking-[.15em] text-secondary">{number}</p><h1 id="page-title" className="mb-3 text-3xl font-bold tracking-tight text-primary md:text-4xl">{title}</h1>{children}</section>; }
-function SecureBadge(){ return <span className="inline-flex items-center gap-1 rounded-full border border-secondary/30 bg-[#e4f7f7] px-3 py-1 text-xs font-bold text-secondary"><LockKeyhole size={13}/> Secured demo</span>; }
-export function Landing(){const r=useRouter(),f=useFlow(),t=copy[f.language];const start=(p:string)=>{f.setPrompt(p);f.setIntent(/renew|licen[cs]e/i.test(p)?"license-renewal":"ownership-transfer");r.push("/understand")};return <section aria-labelledby="landing-title" className="relative mx-auto flex min-h-[calc(100vh-120px)] max-w-5xl flex-col items-center justify-center px-4 text-center"><div aria-hidden="true" className="absolute inset-x-0 top-10 -z-10 h-96 bg-[radial-gradient(ellipse_at_top,_rgba(214,227,255,.8),_transparent_65%)]"/><span className="mb-5 rounded-full border border-primary/10 bg-[#d6e3ff] px-3 py-1 text-xs font-bold tracking-wide text-primary">{t.welcome}</span><h1 id="landing-title" className="max-w-2xl text-4xl font-bold tracking-tight text-primary md:text-5xl">{t.title}</h1><p className="mt-5 max-w-xl text-lg leading-7 text-muted">{t.description}</p><form aria-label="Describe the service you need" onSubmit={e=>{e.preventDefault();start(f.prompt)}} className="mt-10 flex w-full max-w-3xl gap-2 rounded-2xl border border-outline-variant/50 bg-white p-2 shadow-civic"><label className="sr-only" htmlFor="service-prompt">Describe what you need</label><input id="service-prompt" value={f.prompt} onChange={e=>f.setPrompt(e.target.value)} className="min-w-0 flex-1 rounded-xl bg-surface-low px-5 py-4 text-left" placeholder={t.placeholder}/><button aria-label="Start service guidance" className="btn-primary">{t.start}<ChevronRight size={18}/></button></form><div className="mt-9"><p className="mb-4 text-xs font-bold uppercase tracking-[.15em] text-outline">{t.common}</p><div className="flex flex-wrap justify-center gap-3">{["Transfer ownership","Renew license","Replace / download RC","Pay a challan"].map(x=><button aria-label={`Start ${x}`} key={x} onClick={()=>start(x)} className="rounded-full border border-outline-variant/50 bg-white px-4 py-2 text-sm font-semibold hover:bg-surface-low">{x}</button>)}</div></div></section>}
-export function Understand(){const r=useRouter(),f=useFlow(),item=data[f.intent],t=copy[f.language];return <Step number="Step 1 of 4" title={t.help}><div className="card mt-7 p-7"><p className="text-xs font-bold uppercase tracking-widest text-muted">{t.identified}</p><h2 className="mt-2 text-2xl font-bold">{item.label}</h2><p className="mt-3 leading-7 text-muted">{item.description} Based on your request, I’ll ask a few quick questions and prepare a personalised checklist.</p><div className="mt-7 flex flex-wrap gap-3"><button aria-label="Confirm identified service" onClick={()=>r.push("/questions")} className="btn-primary">{t.continue}<ChevronRight size={18}/></button><Link href="/" className="btn-secondary">{t.another}</Link></div></div></Step>}
-export function Questions(){const r=useRouter(),f=useFlow(),item=data[f.intent],[index,setIndex]=useState(0),[error,setError]=useState("");const q=item.questions[index];const req=requirementFor(f.intent,q.id);const choose=(value:string)=>{const check=validateAnswer(f.intent,q.id,value);if(!check.success){setError(check.error.issues[0]?.message||"Please check this answer.");return}f.setAnswers({...f.answers,[q.id]:value});if(index===item.questions.length-1)r.push("/plan");else {setIndex(index+1);setError("")}};return <Step number={`Step ${index+2} of 4`} title={q.label}><p className="mb-2 max-w-xl text-muted">A few details help us give you the correct forms, documents, and next steps.</p><p className="mb-7 text-sm font-bold text-primary">{req}</p>{q.options?<div role="group" aria-label={q.label} className="grid gap-3 sm:grid-cols-2">{q.options.map(o=><button key={o} onClick={()=>choose(o)} className="card min-h-28 p-5 text-left font-bold transition hover:-translate-y-0.5 hover:border-primary hover:bg-surface-container">{o}</button>)}</div>:<form onSubmit={e=>{e.preventDefault();choose(new FormData(e.currentTarget).get("answer")?.toString()||"")}} className="card p-6"><label className="mb-2 block text-sm font-bold" htmlFor="answer">Your answer <span className="text-primary">({req})</span></label><input id="answer" name="answer" aria-describedby={error?"answer-error":undefined} placeholder={q.placeholder} className="w-full rounded-md border border-outline-variant px-4 py-3"/><button className="btn-primary mt-5">Continue <ChevronRight size={18}/></button></form>}{error&&<p id="answer-error" role="alert" className="mt-4 text-sm font-semibold text-[#93000a]">{error}</p>}<p className="mt-8 text-sm text-muted">Question {index+1} of {item.questions.length}</p></Step>}
-export function Plan(){const r=useRouter(),f=useFlow(),item=data[f.intent];return <Step number="Your personalised path" title="Your Transfer Plan"><p className="max-w-xl text-muted">Here is a clear path based on the details you shared. You can return to this checklist at any time.</p><ol className="card mt-7 divide-y divide-outline-variant/50">{item.plan.map((x,i)=><li className="flex gap-4 p-5" key={x}><span aria-hidden="true" className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-primary text-sm font-bold text-white">{i+1}</span><div><h2 className="font-bold">{x}</h2><p className="mt-1 text-sm text-muted">{i===0?"We’ll use the details you have provided.":"This step is included in your application checklist."}</p></div></li>)}</ol><button onClick={()=>r.push("/upload")} className="btn-primary mt-7">Upload documents <ChevronRight size={18}/></button></Step>}
-export function Uploads(){const r=useRouter(),f=useFlow(),item=data[f.intent];const add=(n:string,file?:File)=>f.setUploads({...f.uploads,[n]:file?.name||`${n.toLowerCase().replaceAll(" ","-")}.pdf`});return <Step number="Documents" title="Upload your documents"><div className="flex flex-wrap items-center justify-between gap-3"><p className="text-muted">Add clear scans or photos. This prototype validates files locally—nothing is stored.</p><SecureBadge/></div><div className="mt-7 space-y-3">{item.documents.map(n=><div className="card flex flex-wrap items-center justify-between gap-3 p-4" key={n}><div className="flex items-center gap-3"><FileText aria-hidden="true" className="text-primary"/><div><h2 className="font-bold">{n} <span className="text-sm font-semibold text-primary">(Required)</span></h2>{f.uploads[n]?<p className="flex items-center gap-1 text-sm text-secondary"><Check size={14}/> {f.uploads[n]} · Validated</p>:<p className="text-sm text-muted">PDF, JPG, or PNG</p>}</div></div><label className="btn-secondary cursor-pointer py-2 text-sm"><UploadCloud size={16}/>{f.uploads[n]?"Replace":"Upload"}<input aria-label={`Upload ${n}`} onChange={e=>add(n,e.target.files?.[0])} className="hidden" type="file"/></label></div>)}</div><button onClick={()=>r.push("/review")} className="btn-primary mt-7">Review application <ChevronRight size={18}/></button></Step>}
-export function Review(){const r=useRouter(),f=useFlow(),item=data[f.intent],[verified,setVerified]=useState(false);return <Step number="Final review" title="Check your application"><p className="text-muted">Confirm your details before submitting your request.</p><div className="card mt-7 p-6"><h2 className="text-lg font-bold">{item.label}</h2><dl className="mt-5 grid gap-4 border-y border-outline-variant/50 py-5 sm:grid-cols-2">{Object.entries(f.answers).map(([key,value])=><div key={key}><dt className="text-xs font-bold uppercase tracking-wider text-muted">{key}</dt><dd className="mt-1 font-semibold">{value}</dd></div>)}</dl><h2 className="mt-5 font-bold">Documents</h2><ul className="mt-3 space-y-2 text-sm">{item.documents.map(n=><li className="flex items-center gap-2" key={n}>{f.uploads[n]?<BadgeCheck aria-hidden="true" size={17} className="text-secondary"/>:<AlertCircle aria-hidden="true" size={17} className="text-amber-600"/>}{n} <span className="text-muted">{f.uploads[n]?"ready":"not added"}</span></li>)}</ul><TurnstileDemo onVerified={setVerified}/></div><button disabled={!verified} onClick={()=>r.push("/payment")} className="btn-primary mt-7">Continue to payment <ChevronRight size={18}/></button></Step>}
+
+const copy = {
+  en: {
+    welcome: "WELCOME TO PARIVAHAN PATH",
+    title: "What do you need to do today?",
+    description: "Tell us what you need in your own words. We'll figure out the right service and guide you step by step.",
+    placeholder: "e.g. I bought a second-hand car and want to transfer it.",
+    start: "Start",
+    common: "Common tasks",
+    identified: "Identified service",
+    help: "I can help with that.",
+    continue: "Yes, continue",
+    another: "Choose another service"
+  },
+  hi: {
+    welcome: "परिवहन पथ में आपका स्वागत है",
+    title: "आज आप क्या करना चाहते हैं?",
+    description: "अपनी ज़रूरत अपने शब्दों में बताइए। हम सही सेवा ढूँढकर कदम-दर-कदम मदद करेंगे।",
+    placeholder: "उदा. मैंने पुरानी कार खरीदी है और स्वामित्व स्थानांतरित करना चाहता हूँ।",
+    start: "शुरू करें",
+    common: "सामान्य कार्य",
+    identified: "पहचानी गई सेवा",
+    help: "मैं इसमें आपकी मदद कर सकता हूँ।",
+    continue: "हाँ, आगे बढ़ें",
+    another: "दूसरी सेवा चुनें"
+  }
+};
+
+export function Step({ number, title, children }: { number: string; title: string; children: React.ReactNode }) {
+  return (
+    <section aria-labelledby="page-title" className="mx-auto flex min-h-[calc(100vh-140px)] max-w-2xl flex-col justify-center px-6 py-10">
+      <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.2em] text-secondary">{number}</p>
+      <h1 id="page-title" className="mb-4 text-2xl font-bold tracking-tight text-primary md:text-3xl leading-snug">{title}</h1>
+      {children}
+    </section>
+  );
+}
+
+function SecureBadge() {
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full border border-secondary/20 bg-secondary/5 px-2.5 py-0.5 text-[10px] font-bold text-secondary">
+      <LockKeyhole size={11} /> Secured demo
+    </span>
+  );
+}
+
+export function Landing() {
+  const r = useRouter();
+  const f = useFlow();
+  const t = copy[f.language];
+
+  const start = (p: string) => {
+    f.setPrompt(p);
+    f.setIntent(/renew|licen[cs]e/i.test(p) ? "license-renewal" : "ownership-transfer");
+    r.push("/understand");
+  };
+
+  return (
+    <section aria-labelledby="landing-title" className="relative mx-auto flex min-h-[calc(100vh-140px)] max-w-4xl flex-col items-center justify-center px-6 py-12 text-center">
+      {/* Decorative Radial Background */}
+      <div aria-hidden="true" className="absolute top-[-4rem] inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-500/10 via-transparent to-transparent opacity-80" />
+
+      <span className="mb-5 rounded-full border border-secondary/20 bg-secondary/5 px-3.5 py-1.5 text-[10px] font-bold tracking-[0.15em] uppercase text-secondary">
+        {t.welcome}
+      </span>
+
+      <h1 id="landing-title" className="max-w-2xl text-3xl font-extrabold tracking-tight text-primary md:text-4xl md:leading-[1.2]">
+        {t.title}
+      </h1>
+
+      <p className="mt-3.5 max-w-lg text-sm leading-relaxed text-outline select-none">
+        {t.description}
+      </p>
+
+      {/* Styled Intent Search form */}
+      <form
+        aria-label="Describe the service you need"
+        onSubmit={(e) => {
+          e.preventDefault();
+          start(f.prompt);
+        }}
+        className="mt-8 flex w-full max-w-2xl flex-col gap-2 rounded-2xl border border-outline-variant/40 bg-surface-low p-2 shadow-civic sm:flex-row"
+      >
+        <label className="sr-only" htmlFor="service-prompt">Describe what you need</label>
+        <input
+          id="service-prompt"
+          value={f.prompt}
+          onChange={(e) => f.setPrompt(e.target.value)}
+          className="min-w-0 flex-1 rounded-xl bg-surface-container/50 px-5 py-2.5 text-sm focus:outline-none"
+          placeholder={t.placeholder}
+        />
+        <button
+          aria-label="Start service guidance"
+          className="btn-primary px-6 py-2.5 text-xs"
+        >
+          {t.start}
+          <ChevronRight size={14} />
+        </button>
+      </form>
+
+      {/* Recommended tasks list below */}
+      <div className="mt-12">
+        <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.2em] text-outline/65">
+          {t.common}
+        </p>
+        <div className="flex flex-wrap justify-center gap-2">
+          {["Transfer ownership", "Renew license", "Replace / download RC", "Pay a challan"].map((x) => (
+            <button
+              aria-label={`Start ${x}`}
+              key={x}
+              onClick={() => start(x)}
+              className="rounded-full border border-outline-variant/60 bg-surface-low text-xs font-semibold text-primary transition-all hover:bg-surface-container hover:border-outline btn-task"
+            >
+              {x}
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function Understand() {
+  const r = useRouter();
+  const f = useFlow();
+  const item = data[f.intent];
+  const t = copy[f.language];
+
+  return (
+    <Step number="Step 1 of 4" title={t.help}>
+      <div className="card mt-3 p-6 md:p-8">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-[#0d9488]">{t.identified}</p>
+        <h2 className="mt-1.5 text-xl font-bold tracking-tight text-primary">{item.label}</h2>
+        <p className="mt-3 text-sm leading-relaxed text-outline">
+          {item.description} Based on your input, we will ask a few quick questions and prepare a personalized checklist map.
+        </p>
+        <div className="mt-6 flex flex-wrap gap-2.5">
+          <button
+            aria-label="Confirm identified service"
+            onClick={() => r.push("/questions")}
+            className="btn-primary text-xs"
+          >
+            {t.continue}
+            <ChevronRight size={14} />
+          </button>
+          <Link href="/" className="btn-secondary text-xs">
+            {t.another}
+          </Link>
+        </div>
+      </div>
+    </Step>
+  );
+}
+
+export function Questions() {
+  const r = useRouter();
+  const f = useFlow();
+  const item = data[f.intent];
+  const [index, setIndex] = useState(0);
+  const [error, setError] = useState("");
+
+  const q = item.questions[index];
+  const req = requirementFor(f.intent, q.id);
+
+  const choose = (value: string) => {
+    const check = validateAnswer(f.intent, q.id, value);
+    if (!check.success) {
+      setError(check.error.issues[0]?.message || "Please check this answer.");
+      return;
+    }
+    f.setAnswers({ ...f.answers, [q.id]: value });
+    if (index === item.questions.length - 1) {
+      r.push("/plan");
+    } else {
+      setIndex(index + 1);
+      setError("");
+    }
+  };
+
+  return (
+    <Step number={`Step ${index + 2} of 4`} title={q.label}>
+      <p className="mb-1 text-sm text-outline">A few steps help us prepare correct forms, documents and next steps.</p>
+      <p className="mb-6 text-xs font-bold text-secondary uppercase tracking-wider">{req}</p>
+
+      {q.options ? (
+        <div role="group" aria-label={q.label} className="grid gap-3 sm:grid-cols-2">
+          {q.options.map((o) => (
+            <button
+              key={o}
+              onClick={() => choose(o)}
+              className="card min-h-20 p-5 text-left font-bold text-sm tracking-tight hover:-translate-y-0.5 hover:border-[#0d9488]"
+            >
+              {o}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            choose(new FormData(e.currentTarget).get("answer")?.toString() || "");
+          }}
+          className="card p-6 space-y-4"
+        >
+          <label className="block text-sm font-semibold text-primary" htmlFor="answer">
+            Your answer <span className="text-secondary">({req})</span>
+          </label>
+          <input
+            id="answer"
+            name="answer"
+            aria-describedby={error ? "answer-error" : undefined}
+            placeholder={q.placeholder}
+            className="w-full rounded-lg border border-outline-variant px-4 py-2.5 text-sm focus:outline-none"
+          />
+          <button className="btn-primary text-xs w-full py-2.5">
+            Continue
+            <ChevronRight size={14} />
+          </button>
+        </form>
+      )}
+
+      {error && (
+        <p id="answer-error" role="alert" className="mt-4 text-sm font-semibold text-[#b3261e] bg-[#ffe4e1] border border-[#f2b8b5] p-2.5 rounded-lg text-center">
+          {error}
+        </p>
+      )}
+
+      <p className="mt-8 text-xs font-bold uppercase tracking-wider text-outline/65">
+        Question {index + 1} of {item.questions.length}
+      </p>
+    </Step>
+  );
+}
+
+export function Plan() {
+  const r = useRouter();
+  const f = useFlow();
+  const item = data[f.intent];
+
+  return (
+    <Step number="Your personalised path" title="Your Action Plan">
+      <p className="text-sm text-outline">Here is your customized path checklist. You can return to this list at any time.</p>
+
+      <ol className="card mt-6 divide-y divide-outline-variant/40">
+        {item.plan.map((x, i) => (
+          <li className="flex gap-4 p-5" key={x}>
+            <span aria-hidden="true" className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-primary text-xs font-bold text-surface">
+              {i + 1}
+            </span>
+            <div>
+              <h2 className="text-sm font-bold text-primary">{x}</h2>
+              <p className="mt-0.5 text-xs text-outline">
+                {i === 0 ? "We'll use details you shared." : "Will be reviewed step-by-step during status tracking."}
+              </p>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <button
+        onClick={() => r.push("/upload")}
+        className="btn-primary mt-6 text-xs w-full sm:w-auto"
+      >
+        Upload documents
+        <ChevronRight size={14} />
+      </button>
+    </Step>
+  );
+}
+
+export function Uploads() {
+  const r = useRouter();
+  const f = useFlow();
+  const item = data[f.intent];
+
+  const add = (n: string, file?: File) =>
+    f.setUploads({ ...f.uploads, [n]: file?.name || `${n.toLowerCase().replaceAll(" ", "-")}.pdf` });
+
+  return (
+    <Step number="Documents" title="Upload required files">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-xs text-outline">Verify details. Local validation simulates checks instantly.</p>
+        <SecureBadge />
+      </div>
+
+      <div className="mt-6 space-y-3">
+        {item.documents.map((n) => (
+          <div className="card flex flex-wrap items-center justify-between gap-3 p-4" key={n}>
+            <div className="flex items-center gap-3">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-surface-container text-primary">
+                <FileText size={16} />
+              </span>
+              <div>
+                <h2 className="text-xs font-bold text-primary">
+                  {n} <span className="text-[10px] font-semibold text-secondary lowercase font-mono">(required)</span>
+                </h2>
+                {f.uploads[n] ? (
+                  <p className="flex items-center gap-1 text-[10px] font-bold text-secondary mt-0.5">
+                    <Check size={11} /> {f.uploads[n]}
+                  </p>
+                ) : (
+                  <p className="text-[10px] text-outline mt-0.5">PDF, JPG, or PNG</p>
+                )}
+              </div>
+            </div>
+
+            <label className="btn-secondary cursor-pointer px-4.5 py-2.5 text-xs">
+              <UploadCloud size={13} />
+              {f.uploads[n] ? "Replace" : "Upload"}
+              <input
+                aria-label={`Upload ${n}`}
+                onChange={(e) => add(n, e.target.files?.[0])}
+                className="hidden"
+                type="file"
+              />
+            </label>
+          </div>
+        ))}
+      </div>
+
+      <button
+        onClick={() => r.push("/review")}
+        className="btn-primary mt-6 text-xs w-full sm:w-auto"
+      >
+        Review application
+        <ChevronRight size={14} />
+      </button>
+    </Step>
+  );
+}
+
+export function Review() {
+  const r = useRouter();
+  const f = useFlow();
+  const item = data[f.intent];
+  const [verified, setVerified] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
+  const handleSubmit = async () => {
+    if (!f.citizen) {
+      r.push("/sign-in");
+      return;
+    }
+    setSubmitting(true);
+    setSubmitError("");
+    try {
+      const response = await fetch("/api/applications/submit", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ answers: f.answers, uploads: f.uploads }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to submit");
+      }
+      const resData = await response.json();
+      if (resData.applicationId) {
+        f.setApplicationId(resData.applicationId);
+      }
+      const meResponse = await fetch("/api/me");
+      if (meResponse.ok) {
+        const meData = await meResponse.json();
+        if (meData.context?.payment?.transactionReference) {
+          f.setPaymentReference(meData.context.payment.transactionReference);
+        }
+        if (meData.context?.payment?.status) {
+          f.setPaymentStatus(meData.context.payment.status);
+        }
+      }
+      r.push("/payment");
+    } catch {
+      setSubmitError("Could not save application details. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <Step number="Final review" title="Double check all details">
+      <p className="text-sm text-outline">Ensure accuracy before final submission to MongoDB.</p>
+
+      <div className="card mt-6 p-6 space-y-5">
+        <h2 className="text-base font-bold text-primary border-b border-outline-variant/40 pb-2">{item.label}</h2>
+
+        <dl className="grid gap-4 sm:grid-cols-2">
+          {Object.entries(f.answers).map(([key, value]) => (
+            <div key={key} className="space-y-0.5">
+              <dt className="text-[10px] font-bold uppercase tracking-wider text-outline">{key}</dt>
+              <dd className="font-semibold text-sm text-primary">{value}</dd>
+            </div>
+          ))}
+        </dl>
+
+        <div className="border-t border-outline-variant/40 pt-4">
+          <h3 className="font-bold text-xs text-outline uppercase tracking-wider mb-2">Documents List</h3>
+          <ul className="grid gap-2 text-xs">
+            {item.documents.map((n) => (
+              <li className="flex items-center gap-2" key={n}>
+                {f.uploads[n] ? (
+                  <BadgeCheck aria-hidden="true" size={14} className="text-secondary shrink-0" />
+                ) : (
+                  <AlertCircle aria-hidden="true" size={14} className="text-[#b3261e] shrink-0" />
+                )}
+                <span className="font-medium text-primary">{n}</span>
+                <span className="text-[10px] text-outline/65">({f.uploads[n] ? "file ready" : "missing"})</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <TurnstileDemo onVerified={setVerified} />
+      </div>
+
+      {submitError && (
+        <p role="alert" className="mt-4 text-xs font-semibold text-[#b3261e] bg-[#ffe4e1] border border-[#f2b8b5] p-2.5 rounded-lg text-center">
+          {submitError}
+        </p>
+      )}
+
+      <button
+        disabled={!verified || submitting}
+        onClick={handleSubmit}
+        className="btn-primary mt-6 text-xs w-full py-2.5"
+      >
+        {submitting ? "Saving..." : f.citizen ? "Submit & pay" : "Sign in to submit"}
+        <ChevronRight size={14} />
+      </button>
+    </Step>
+  );
+}
+
 type ApplicationStatus = "queued" | "processing" | "approved" | "rejected";
-export function Track(){const r=useRouter(),f=useFlow(),[status,setStatus]=useState<ApplicationStatus>("queued"),[attempt,setAttempt]=useState(0);useEffect(()=>{setStatus("queued");const processing=window.setTimeout(()=>setStatus("processing"),450);const result=window.setTimeout(async()=>{try{const response=await fetch(`/api/application-status?attempt=${attempt}`);const payload=await response.json();setStatus(payload.status)}catch{setStatus("rejected")}},1000);return()=>{clearTimeout(processing);clearTimeout(result)}},[attempt]);const retry=()=>setAttempt(a=>a+1);const descriptions={queued:"What happened: your application is safely queued. You do not need to do anything. Next: payment and document checks.",processing:"Where you are: RTO processing. We are checking your application and documents. Next: appointment availability.",approved:"What happened: your application is approved. Next: your driving licence will be issued.",rejected:"A temporary review issue occurred. Your original submission is safe. Action: retry this review only."};const steps=["Application submitted","Payment confirmed","Document verification","RTO processing","Appointment / next step","Licence issued"];const active=status==="queued"?0:status==="processing"?3:5;return <Step number="Application PP-2026-08142" title="Track your application"><div className="card mt-7 p-6" aria-live="polite"><div className={`mb-7 flex items-center gap-3 rounded-md p-4 ${status==="rejected"?"bg-[#ffdad6]":"bg-surface-container"}`}><Clock3 aria-hidden="true" className="text-primary"/><div><p className="font-bold capitalize">{status}</p><p className="text-sm text-muted">{descriptions[status]}</p><p className="mt-1 text-sm font-semibold text-primary">Payment: {f.paymentStatus.replaceAll("-"," ")}</p></div></div>{steps.map((title,i)=><div className="flex gap-4" key={title}><div className="flex flex-col items-center"><span aria-label={`${title}: ${i<active||status==="approved"?"complete":i===active?status:"pending"}`} className={`grid h-8 w-8 place-items-center rounded-full ${i<active||status==="approved"?"bg-secondary text-white":i===active?"bg-primary text-white":"border-2 border-outline-variant bg-white text-muted"}`}>{i<active||status==="approved"?<Check size={17}/>:i+1}</span>{i<5&&<span className="h-12 w-px bg-outline-variant"/>}</div><div className="pb-7"><h2 className="font-bold">{title}</h2><p className="text-sm text-muted">{i===1&&f.paymentStatus!=="success"?"Payment confirmation is pending — do not pay again.":i===4?"We will show an appointment when it is available.":"Status is recorded in your application."}</p></div></div>)}{status==="rejected"&&<button onClick={retry} className="btn-primary" aria-label="Retry application review without a new submission"><RefreshCw size={17}/> Retry review</button>}</div><div className="mt-7 flex flex-wrap gap-3"><button onClick={()=>r.push("/validation")} className="btn-secondary">View document validation <ChevronRight size={18}/></button>{f.paymentStatus!=="success"&&<button onClick={()=>r.push("/payment")} className="btn-secondary">Check payment status</button>}</div></Step>}
-type ValidationDoc={name:string;status:"validated"|"needs-attention";detail:string;checks:string[]};
-export function Validation(){const f=useFlow(),[status,setStatus]=useState<ApplicationStatus>("queued"),[docs,setDocs]=useState<ValidationDoc[]>([]),[attempt,setAttempt]=useState(0);useEffect(()=>{setStatus("queued");setDocs([]);const processing=window.setTimeout(()=>setStatus("processing"),350);const load=window.setTimeout(async()=>{try{const result=await fetch(`/api/validation?attempt=${attempt}`);const payload=await result.json();setDocs(payload.documents);setStatus(payload.status)}catch{setStatus("rejected")}},800);return()=>{clearTimeout(processing);clearTimeout(load)}},[attempt]);const item=data[f.intent];return <Step number="Document validation" title="Your document checks"><div role="status" aria-live="polite" className={`rounded-md p-4 ${status==="rejected"?"bg-[#ffdad6]":"bg-surface-container"}`}><p className="font-bold capitalize">{status}</p><p className="text-sm text-muted">{status==="queued"?"Validation is queued. You can stay on this page.":status==="processing"?"Checking format, signatures, and matching details.":status==="rejected"?"Validation service did not respond. Your uploaded documents are safe.":"Document checks are complete."}</p>{status==="rejected"&&<button onClick={()=>setAttempt(a=>a+1)} className="btn-secondary mt-3"><RefreshCw size={16}/> Retry validation</button>}</div><div className="mt-7 space-y-3">{status!=="approved"?<div className="card p-5 text-muted">Current state: {status}. We will always show a clear result here.</div>:docs.map(doc=><div className="card p-5" key={doc.name}><div className="flex items-start gap-4">{doc.status==="validated"?<BadgeCheck aria-hidden="true" className="text-secondary"/>:<AlertCircle aria-hidden="true" className="text-[#ba1a1a]"/>}<div><h2 className="font-bold">{doc.name}</h2><p className={`text-sm ${doc.status==="validated"?"text-secondary":"text-[#93000a]"}`}>{doc.detail}</p><h3 className="mt-3 text-sm font-bold">Checks completed</h3><ul className="mt-1 space-y-1 text-sm text-muted">{doc.checks.map(check=><li className="flex items-center gap-2" key={check}><Check size={14} className="text-secondary"/>{check}</li>)}</ul></div></div></div>)}</div><Link href="/upload" className="btn-primary mt-7">Update documents <ChevronRight size={18}/></Link></Step>}
+
+export function Track() {
+  const r = useRouter();
+  const f = useFlow();
+  const [status, setStatus] = useState<ApplicationStatus>("queued");
+  const [attempt, setAttempt] = useState(0);
+
+  useEffect(() => {
+    setStatus("queued");
+    const processing = window.setTimeout(() => setStatus("processing"), 450);
+    const result = window.setTimeout(async () => {
+      try {
+        const response = await fetch(`/api/application-status?attempt=${attempt}`);
+        const payload = await response.json();
+        setStatus(payload.status);
+      } catch {
+        setStatus("rejected");
+      }
+    }, 1000);
+    return () => {
+      clearTimeout(processing);
+      clearTimeout(result);
+    };
+  }, [attempt]);
+
+  const retry = () => setAttempt((a) => a + 1);
+
+  const descriptions = {
+    queued: "Your application is safely queued. Next: payment and document checks.",
+    processing: "Where you are: RTO processing. Checking uploaded documentation. Next: appointment scheduling.",
+    approved: "Your application is approved. Next: licence publication and dispatch.",
+    rejected: "A temporary review issue occurred. Your original submission is safe. Actions: retry review check."
+  };
+
+  const steps = [
+    "Application submitted",
+    "Payment confirmed",
+    "Document verification",
+    "RTO processing",
+    "Appointment / next step",
+    "Licence issued"
+  ];
+
+  const active = status === "queued" ? 0 : status === "processing" ? 3 : 5;
+
+  return (
+    <Step number={`Application ID: ${f.applicationId}`} title="Track application progress">
+      <div className="card mt-3 p-6 space-y-6" aria-live="polite">
+
+        {/* Status Callout Banner */}
+        <div
+          className={`flex gap-3 rounded-xl p-4 border ${status === "rejected"
+              ? "bg-[#ffe4e1] border-[#f2b8b5] text-[#b3261e]"
+              : "bg-surface-container/60 border-outline-variant/60"
+            }`}
+        >
+          <Clock3 aria-hidden="true" className="shrink-0 mt-0.5" size={16} />
+          <div>
+            <p className="font-bold text-xs uppercase tracking-wider">Status: {status}</p>
+            <p className="text-xs leading-relaxed text-outline/90 mt-1">{descriptions[status]}</p>
+            <p className="mt-2 text-xs font-bold text-primary">Payment: {f.paymentStatus.replaceAll("-", " ")}</p>
+          </div>
+        </div>
+
+        {/* Steps Flow Timeline */}
+        <div className="space-y-1">
+          {steps.map((title, i) => {
+            const isComplete = i < active || status === "approved";
+            const isActiveStep = i === active && status !== "approved";
+            return (
+              <div className="flex gap-4" key={title}>
+                <div className="flex flex-col items-center">
+                  <span
+                    className={`grid h-7 w-7 place-items-center rounded-full text-xs font-bold ${isComplete
+                        ? "bg-secondary text-surface"
+                        : isActiveStep
+                          ? "bg-primary text-surface"
+                          : "border border-outline-variant bg-surface-low text-outline/50"
+                      }`}
+                  >
+                    {isComplete ? <Check size={13} /> : i + 1}
+                  </span>
+                  {i < 5 && (
+                    <span className={`h-8 w-px ${i < active ? "bg-secondary" : "bg-outline-variant"}`} />
+                  )}
+                </div>
+                <div className="pb-4">
+                  <h2 className={`text-xs font-bold ${isActiveStep ? "text-primary" : "text-ink/80"}`}>
+                    {title}
+                  </h2>
+                  <p className="text-[10px] text-outline/65 mt-0.5">
+                    {i === 1 && f.paymentStatus !== "success"
+                      ? "Payment confirmation pending — do not resubmit."
+                      : i === 4
+                        ? "Appointments list will appear once available."
+                        : "Action recorded."}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {status === "rejected" && (
+          <button
+            onClick={retry}
+            className="btn-primary text-xs w-full py-2.5"
+            aria-label="Retry application review"
+          >
+            <RefreshCw size={13} /> Retry review
+          </button>
+        )}
+      </div>
+
+      <div className="mt-6 flex flex-col gap-2.5 sm:flex-row">
+        <button onClick={() => r.push("/validation")} className="btn-secondary text-xs flex-1 py-2.5">
+          View document validation
+          <ChevronRight size={13} />
+        </button>
+        {f.paymentStatus !== "success" && (
+          <button onClick={() => r.push("/payment")} className="btn-secondary text-xs flex-1 py-2.5">
+            Check payment status
+          </button>
+        )}
+      </div>
+    </Step>
+  );
+}
+
+type ValidationDoc = {
+  name: string;
+  status: "validated" | "needs-attention";
+  detail: string;
+  checks: string[];
+};
+
+export function Validation() {
+  const f = useFlow();
+  const [status, setStatus] = useState<ApplicationStatus>("queued");
+  const [docs, setDocs] = useState<ValidationDoc[]>([]);
+  const [attempt, setAttempt] = useState(0);
+
+  useEffect(() => {
+    setStatus("queued");
+    setDocs([]);
+    const processing = window.setTimeout(() => setStatus("processing"), 350);
+    const load = window.setTimeout(async () => {
+      try {
+        const result = await fetch(`/api/validation?attempt=${attempt}`);
+        const payload = await result.json();
+        setDocs(payload.documents);
+        setStatus(payload.status);
+      } catch {
+        setStatus("rejected");
+      }
+    }, 800);
+    return () => {
+      clearTimeout(processing);
+      clearTimeout(load);
+    };
+  }, [attempt]);
+
+  return (
+    <Step number="Document validation" title="Document checks timeline">
+      <div
+        role="status"
+        aria-live="polite"
+        className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-xl p-4.5 border ${status === "rejected"
+            ? "bg-[#ffe4e1] border-[#f2b8b5] text-[#b3261e]"
+            : "bg-surface-container/60 border-outline-variant/60"
+          }`}
+      >
+        <div>
+          <p className="font-bold text-xs uppercase tracking-wider">State: {status}</p>
+          <p className="text-xs text-outline/90 mt-0.5">
+            {status === "queued"
+              ? "Checking uploads format, signature, details."
+              : status === "processing"
+                ? "Checking formats and OCR signatures."
+                : status === "rejected"
+                  ? "Failed to validate. No local files were changed."
+                  : "All checks completed."}
+          </p>
+        </div>
+        {status === "rejected" && (
+          <button
+            onClick={() => setAttempt((a) => a + 1)}
+            className="btn-secondary text-xs px-3.5 py-1.5 shrink-0 self-start sm:self-auto"
+          >
+            <RefreshCw size={12} /> Retry validation
+          </button>
+        )}
+      </div>
+
+      <div className="mt-6 space-y-3">
+        {status !== "approved" ? (
+          <div className="card p-5 text-xs text-outline/80">Checking file verification statuses…</div>
+        ) : (
+          docs.map((doc) => (
+            <div className="card p-5" key={doc.name}>
+              <div className="flex items-start gap-3">
+                {doc.status === "validated" ? (
+                  <BadgeCheck aria-hidden="true" size={18} className="text-secondary shrink-0 mt-0.5" />
+                ) : (
+                  <AlertCircle aria-hidden="true" size={18} className="text-[#b3261e] shrink-0 mt-0.5" />
+                )}
+                <div>
+                  <h2 className="text-xs font-bold text-primary">{doc.name}</h2>
+                  <p className={`text-[10px] font-bold leading-normal mt-0.5 ${doc.status === "validated" ? "text-secondary" : "text-[#b3261e]"}`}>
+                    {doc.detail}
+                  </p>
+
+                  <h3 className="mt-3 text-[10px] font-bold uppercase tracking-wider text-outline">Checks Completed</h3>
+                  <ul className="mt-1.5 grid gap-1 text-xs text-outline/80">
+                    {doc.checks.map((check) => (
+                      <li className="flex items-center gap-1.5" key={check}>
+                        <Check size={11} className="text-secondary shrink-0" />
+                        {check}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      <Link href="/upload" className="btn-primary mt-6 text-xs w-full py-2.5 max-w-[200px] text-center">
+        Update documents
+      </Link>
+    </Step>
+  );
+}
