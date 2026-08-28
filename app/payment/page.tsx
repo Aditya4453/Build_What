@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Check, RefreshCw } from "lucide-react";
 import { Shell } from "@/components/shell";
@@ -29,7 +29,7 @@ const copy: Record<PaymentStatus, { title: string; description: string }> = {
   },
 };
 
-export default function Page() {
+function PaymentPageContent() {
   const f = useFlow();
   const searchParams = useSearchParams();
   const [attempt, setAttempt] = useState(0);
@@ -130,5 +130,19 @@ export default function Page() {
         </div>
       </section>
     </Shell>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={
+      <Shell>
+        <section className="mx-auto flex min-h-[calc(100vh-140px)] max-w-lg flex-col justify-center px-6 py-10">
+          <p className="text-xs text-outline text-center">Loading payment...</p>
+        </section>
+      </Shell>
+    }>
+      <PaymentPageContent />
+    </Suspense>
   );
 }
