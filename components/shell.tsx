@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CarFront, LogOut, Moon, Sun, User } from "lucide-react";
+import { useState } from "react";
+import { CarFront, LogOut, Moon, Sun, User, Menu, X } from "lucide-react";
 import { useFlow } from "./flow-provider";
 import { CitizenAssistant } from "./citizen-assistant";
 
 export function Shell({ children }: { children: React.ReactNode }) {
   const { language, setLanguage, citizen, signOut, theme, setTheme } = useFlow();
   const pathname = usePathname();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const leave = async () => {
     await fetch("/api/auth/sign-out", { method: "POST" });
@@ -38,23 +40,34 @@ export function Shell({ children }: { children: React.ReactNode }) {
       </a>
 
       {/* Transparent Header without Border Line */}
-      <header className="sticky top-0 z-20 bg-transparent">
+      <header className="sticky top-0 z-20 bg-transparent relative">
         <div className="w-full flex h-16 items-center justify-between px-6 md:px-10 md:grid md:grid-cols-3">
           
-          {/* Logo Brand left */}
-          <Link
-            href="/"
-            aria-label="Parivahan Path home"
-            className="flex items-center gap-2.5 text-base font-bold tracking-tight text-primary transition-opacity hover:opacity-90 justify-self-start"
-          >
-            <span
-              aria-hidden="true"
-              className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-surface"
+          {/* Logo Brand left & Hamburger Menu toggle button */}
+          <div className="flex items-center gap-3 justify-self-start z-30">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-outline hover:text-primary hover:bg-surface-container md:hidden transition-colors"
+              aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={mobileMenuOpen}
             >
-              <CarFront size={16} />
-            </span>
-            <span>Parivahan Path</span>
-          </Link>
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+            <Link
+              href="/"
+              aria-label="Parivahan Path home"
+              className="flex items-center gap-2.5 text-base font-bold tracking-tight text-primary transition-opacity hover:opacity-90"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <span
+                aria-hidden="true"
+                className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-surface"
+              >
+                <CarFront size={16} />
+              </span>
+              <span>Parivahan Path</span>
+            </Link>
+          </div>
 
           {/* Center Navigation Links with Active Indicators */}
           <nav
@@ -170,6 +183,43 @@ export function Shell({ children }: { children: React.ReactNode }) {
             )}
           </div>
         </div>
+
+        {/* Mobile Navigation Dropdown Drawer */}
+        {mobileMenuOpen && (
+          <div className="absolute top-16 left-0 right-0 z-30 bg-surface-low border-b border-outline-variant px-6 py-4 shadow-civic md:hidden animate-in fade-in slide-in-from-top-4 duration-200">
+            <nav className="flex flex-col gap-4 text-xs font-semibold tracking-wider uppercase">
+              <Link
+                href="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`py-2 transition-colors ${
+                  isHomeActive ? "text-primary font-bold" : "text-outline hover:text-primary"
+                }`}
+              >
+                Home
+              </Link>
+              <Link
+                href="/track"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`py-2 transition-colors ${
+                  isTrackActive ? "text-primary font-bold" : "text-outline hover:text-primary"
+                }`}
+              >
+                Track
+              </Link>
+              {citizen && (
+                <Link
+                  href="/applications"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`py-2 transition-colors ${
+                    isAppsActive ? "text-primary font-bold" : "text-outline hover:text-primary"
+                  }`}
+                >
+                  My Applications
+                </Link>
+              )}
+            </nav>
+          </div>
+        )}
       </header>
 
       {/* Main Page Layout Container */}
