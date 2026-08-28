@@ -39,13 +39,13 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
       {/* Transparent Header without Border Line */}
       <header className="sticky top-0 z-20 bg-transparent">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6 md:px-8">
+        <div className="w-full flex h-16 items-center justify-between px-6 md:px-10 md:grid md:grid-cols-3">
           
           {/* Logo Brand left */}
           <Link
             href="/"
             aria-label="Parivahan Path home"
-            className="flex items-center gap-2.5 text-base font-bold tracking-tight text-primary transition-opacity hover:opacity-90"
+            className="flex items-center gap-2.5 text-base font-bold tracking-tight text-primary transition-opacity hover:opacity-90 justify-self-start"
           >
             <span
               aria-hidden="true"
@@ -59,7 +59,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           {/* Center Navigation Links with Active Indicators */}
           <nav
             aria-label="Primary navigation"
-            className="hidden items-center justify-center gap-7 text-xs font-semibold tracking-wider uppercase md:flex"
+            className="hidden items-center justify-center gap-7 text-xs font-semibold tracking-wider uppercase md:flex justify-self-center"
           >
             <Link
               href="/"
@@ -92,8 +92,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
                 href="/applications"
                 className={`relative py-5 transition-colors ${
                   isAppsActive
-                    ? "text-primary font-bold"
-                    : "text-outline hover:text-primary"
+                     ? "text-primary font-bold"
+                     : "text-outline hover:text-primary"
                 }`}
               >
                 My Applications
@@ -105,7 +105,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           </nav>
 
           {/* Right Action Elements */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 justify-self-end">
             
             {/* Language Selector: EN | हिंदी */}
             <div

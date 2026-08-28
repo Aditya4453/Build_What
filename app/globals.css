@@ -1,11 +1,31 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family: var(--font-inter), 'Nirmala UI', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+
+  /* Typography Scale variables */
+  --text-xxs: 0.625rem;       /* 10px */
+  --lh-xxs: 0.875rem;          /* 14px */
+  --text-xs: 0.75rem;          /* 12px */
+  --lh-xs: 1rem;               /* 16px */
+  --text-sm: 0.875rem;         /* 14px */
+  --lh-sm: 1.25rem;            /* 20px */
+  --text-base: 1rem;           /* 16px */
+  --lh-base: 1.5rem;           /* 24px */
+  --text-lg: 1.125rem;         /* 18px */
+  --lh-lg: 1.75rem;            /* 28px */
+  --text-xl: 1.25rem;          /* 20px */
+  --lh-xl: 1.875rem;           /* 30px */
+  --text-2xl: 1.5rem;          /* 24px */
+  --lh-2xl: 2rem;              /* 32px */
+  --text-3xl: 1.875rem;        /* 30px */
+  --lh-3xl: 2.25rem;           /* 36px */
+  --text-4xl: 2.25rem;         /* 36px */
+  --lh-4xl: 2.5rem;            /* 40px */
   
   /* Light Theme Colors */
   --color-primary: #002045; /* Deep navy primary text/elements */
@@ -21,7 +41,7 @@
 
   /* Additional Custom Tokens */
   --bg-page: #F9F9FF;
-  --bg-gradient: none;
+  --bg-gradient: url('/images/Background_light.png');
   --bg-card: #ffffff;
   --border-card: #f1f5f9;
   --shadow-card: 0 4px 20px -2px rgba(11, 21, 41, 0.03), 0 2px 8px -1px rgba(11, 21, 41, 0.02);
@@ -43,7 +63,7 @@
 
   /* Additional Custom Tokens */
   --bg-page: #030712;
-  --bg-gradient: none;
+  --bg-gradient: url('/images/Background_dark.png');
   --bg-card: #0f172a;
   --border-card: #1e293b;
   --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
@@ -58,6 +78,8 @@ body {
   margin: 0;
   background-color: var(--bg-page);
   background-image: var(--bg-gradient);
+  background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
   color: var(--color-ink);
@@ -208,3 +230,32 @@ input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focu
 [data-theme="dark"] .border-outline-variant\/60 {
   border-color: var(--color-outline-variant) !important;
 }
+
+/* Floating/Orbiting decorative icons animations */
+@keyframes floating-slow-1 {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(3deg); }
+}
+
+@keyframes floating-slow-2 {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(-4deg); }
+}
+
+@keyframes floating-slow-3 {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(2deg); }
+}
+
+.animate-float-1 {
+  animation: floating-slow-1 8s ease-in-out infinite;
+}
+
+.animate-float-2 {
+  animation: floating-slow-2 10s ease-in-out infinite;
+}
+
+.animate-float-3 {
+  animation: floating-slow-3 9s ease-in-out infinite;
+}
+

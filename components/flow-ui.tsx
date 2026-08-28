@@ -69,8 +69,6 @@ export function Landing() {
 
   return (
     <section aria-labelledby="landing-title" className="relative mx-auto flex min-h-[calc(100vh-140px)] max-w-4xl flex-col items-center justify-center px-6 py-12 text-center">
-      {/* Decorative Radial Background */}
-      <div aria-hidden="true" className="absolute top-[-4rem] inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-500/10 via-transparent to-transparent opacity-80" />
 
       <span className="mb-5 rounded-full border border-secondary/20 bg-secondary/5 px-3.5 py-1.5 text-[10px] font-bold tracking-[0.15em] uppercase text-secondary">
         {t.welcome}
