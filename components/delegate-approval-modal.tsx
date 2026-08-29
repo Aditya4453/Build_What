@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   X,
   AlertTriangle,
+  AlertCircle,
   FileText,
   Clock,
   ShieldCheck,
@@ -145,8 +146,8 @@ export function DelegateApprovalModal({
         </div>
 
         {/* Informational Callout */}
-        <div className="mt-4 p-3.5 rounded-xl border border-amber-200 dark:border-amber-900/60 bg-amber-50/80 dark:bg-amber-950/30 flex items-start gap-2.5 text-xs text-amber-900 dark:text-amber-200">
-          <AlertTriangle size={17} className="text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+        <div className="mt-4 p-3.5 rounded-xl border border-blue-200 dark:border-blue-900/60 bg-[#EEF4FF] dark:bg-blue-950/40 flex items-start gap-2.5 text-xs text-[#001A4D] dark:text-blue-200">
+          <AlertCircle size={17} className="text-[#002B7F] dark:text-blue-400 shrink-0 mt-0.5" />
           <p className="leading-relaxed text-[11px]">
             Please review the information and documents entered by <strong>{helperName}</strong>. Once approved, your application will be submitted for official verification.
           </p>

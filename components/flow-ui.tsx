@@ -22,6 +22,7 @@ import { TurnstileDemo } from "./turnstile-demo";
 import { getTranslation } from "@/lib/translations";
 import { GovernmentUpdates } from "./government-updates";
 import { DelegateHelpModal } from "./delegate-help-modal";
+import { ProactiveReminders } from "./proactive-reminders";
 
 const data = intents as typeof intents;
 
@@ -63,6 +64,7 @@ export function Landing() {
 
   return (
     <>
+      <ProactiveReminders />
       <div
         style={{
           backgroundImage: `url(${isDark ? "'/images/Background_dark.png'" : "'/images/Background_light.png'"})`,
@@ -191,16 +193,30 @@ export function Questions() {
   const [index, setIndex] = useState(0);
   const [error, setError] = useState("");
 
-  const q = item.questions[index];
+  const q = item.questions[index] as {
+    id: string;
+    label: string;
+    placeholder?: string;
+    options?: string[];
+    type?: string;
+    hint?: string;
+  };
   const req = requirementFor(f.intent, q.id);
+  const [currentVal, setCurrentVal] = useState(f.answers[q.id] || "");
+
+  useEffect(() => {
+    setCurrentVal(f.answers[q.id] || "");
+    setError("");
+  }, [index, q.id, f.answers]);
 
   const choose = (value: string) => {
-    const check = validateAnswer(f.intent, q.id, value);
+    const trimmed = value.trim();
+    const check = validateAnswer(f.intent, q.id, trimmed);
     if (!check.success) {
       setError(check.error.issues[0]?.message || "Please check this answer.");
       return;
     }
-    f.setAnswers({ ...f.answers, [q.id]: value });
+    f.setAnswers({ ...f.answers, [q.id]: trimmed });
     if (index === item.questions.length - 1) {
       r.push("/plan");
     } else {
@@ -211,47 +227,102 @@ export function Questions() {
 
   return (
     <Step number={`${t.questions.step} (${index + 1}/${item.questions.length})`} title={q.label}>
-      <p className="mb-1 text-sm text-[var(--ux4g-text-neutral-secondary,#404040)]">
-        {t.questions.subtitle}
-      </p>
-      <p className="mb-6 text-xs font-bold uppercase tracking-wider text-[var(--ux4g-text-brand-primary-default,#002B7F)]">
+      {q.hint && (
+        <p className="mb-2 text-xs text-[var(--ux4g-text-brand-primary-default,#002B7F)] dark:text-blue-300 font-medium">
+          💡 {q.hint}
+        </p>
+      )}
+      <p className="mb-4 text-xs font-bold uppercase tracking-wider text-[var(--ux4g-text-neutral-tertiary,#737373)] dark:text-neutral-400">
         {t.questions.required}: {req}
       </p>
 
-      {q.options ? (
-        <div role="group" aria-label={q.label} className="grid gap-3 sm:grid-cols-2">
-          {q.options.map((o) => (
-            <button
-              type="button"
-              key={o}
-              onClick={() => choose(o)}
-              className="ux4g-card ux4g-card-solid ux4g-card-vertical flex min-h-[72px] items-center p-4 text-left font-bold text-sm tracking-tight transition-all hover:border-[var(--ux4g-color-primary-600,#002B7F)] hover:shadow-md"
+      {q.type === "select" && q.options ? (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            choose(currentVal);
+          }}
+          className="ux4g-card ux4g-card-solid ux4g-card-vertical p-6 space-y-4 rounded-2xl border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm"
+        >
+          <div className="space-y-1.5">
+            <label className="block text-xs font-bold text-[var(--ux4g-text-neutral-primary,#171717)] dark:text-white" htmlFor="select-answer">
+              Select Option <span className="font-normal text-[var(--ux4g-text-brand-primary-default,#002B7F)]">({req})</span>
+            </label>
+            <select
+              id="select-answer"
+              value={currentVal}
+              onChange={(e) => setCurrentVal(e.target.value)}
+              className="w-full rounded-xl border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] dark:border-neutral-700 bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] dark:bg-neutral-800 px-4 py-3 text-xs text-[var(--ux4g-text-neutral-primary,#171717)] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#002B7F]"
             >
-              {o}
-            </button>
-          ))}
+              <option value="">-- Please select from list --</option>
+              {q.options.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button type="submit" className="ux4g-btn ux4g-btn-primary ux4g-btn-md w-full flex items-center justify-center gap-1.5 font-bold">
+            <span>{t.questions.continueBtn}</span>
+            <ChevronRight size={16} />
+          </button>
+        </form>
+      ) : q.options && q.type !== "select" ? (
+        <div role="group" aria-label={q.label} className="grid gap-3 sm:grid-cols-1">
+          {q.options.map((o) => {
+            const isSelected = f.answers[q.id] === o;
+            return (
+              <button
+                type="button"
+                key={o}
+                onClick={() => choose(o)}
+                className={`p-4 rounded-xl border text-left font-bold text-xs tracking-tight transition-all shadow-sm flex items-center justify-between gap-3 ${
+                  isSelected
+                    ? "border-[#002B7F] bg-[#EEF4FF] dark:bg-blue-950/60 text-[#002B7F] dark:text-white ring-2 ring-[#002B7F]"
+                    : "border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] dark:border-neutral-800 bg-white dark:bg-neutral-900 text-[var(--ux4g-text-neutral-primary,#171717)] dark:text-white hover:border-[#002B7F] hover:bg-[#EEF4FF]/40 dark:hover:bg-neutral-800"
+                }`}
+              >
+                <span>{o}</span>
+                <ChevronRight size={16} className="shrink-0 text-neutral-400" />
+              </button>
+            );
+          })}
         </div>
       ) : (
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            choose(new FormData(e.currentTarget).get("answer")?.toString() || "");
+            choose(currentVal);
           }}
-          className="ux4g-card ux4g-card-solid ux4g-card-vertical p-6 space-y-4"
+          className="ux4g-card ux4g-card-solid ux4g-card-vertical p-6 space-y-4 rounded-2xl border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm"
         >
-          <div className="ux4g-input-container ux4g-input-md ux4g-input-default">
-            <label className="block text-sm font-semibold text-[var(--ux4g-text-neutral-primary,#171717)] mb-1" htmlFor="answer">
+          <div className="space-y-1.5">
+            <label className="block text-xs font-bold text-[var(--ux4g-text-neutral-primary,#171717)] dark:text-white" htmlFor="answer">
               Your answer <span className="font-normal text-[var(--ux4g-text-brand-primary-default,#002B7F)]">({req})</span>
             </label>
-            <input
-              id="answer"
-              name="answer"
-              aria-describedby={error ? "answer-error" : undefined}
-              placeholder={q.placeholder}
-              className="w-full rounded-md border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] px-4 py-2.5 text-sm text-[var(--ux4g-text-neutral-primary,#171717)] focus:outline-none"
-            />
+            {q.type === "textarea" ? (
+              <textarea
+                id="answer"
+                rows={3}
+                aria-describedby={error ? "answer-error" : undefined}
+                placeholder={q.placeholder}
+                value={currentVal}
+                onChange={(e) => setCurrentVal(e.target.value)}
+                className="w-full rounded-xl border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] dark:border-neutral-700 bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] dark:bg-neutral-800 px-4 py-3 text-xs text-[var(--ux4g-text-neutral-primary,#171717)] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#002B7F]"
+              />
+            ) : (
+              <input
+                id="answer"
+                type={q.type === "date" ? "date" : q.type === "number" ? "number" : "text"}
+                aria-describedby={error ? "answer-error" : undefined}
+                placeholder={q.placeholder}
+                value={currentVal}
+                onChange={(e) => setCurrentVal(e.target.value)}
+                className="w-full rounded-xl border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] dark:border-neutral-700 bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] dark:bg-neutral-800 px-4 py-3 text-xs text-[var(--ux4g-text-neutral-primary,#171717)] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#002B7F]"
+              />
+            )}
           </div>
-          <button type="submit" className="ux4g-btn ux4g-btn-primary ux4g-btn-md w-full flex items-center justify-center gap-1.5">
+          <button type="submit" className="ux4g-btn ux4g-btn-primary ux4g-btn-md w-full flex items-center justify-center gap-1.5 font-bold">
             <span>{t.questions.continueBtn}</span>
             <ChevronRight size={16} />
           </button>
@@ -259,8 +330,9 @@ export function Questions() {
       )}
 
       {error && (
-        <div id="answer-error" role="alert" className="ux4g-alert ux4g-alert-error mt-4 p-3 text-xs font-semibold">
-          {error}
+        <div id="answer-error" role="alert" className="ux4g-alert ux4g-alert-error mt-4 p-3 text-xs font-semibold rounded-xl flex items-center gap-2">
+          <AlertCircle size={14} className="shrink-0" />
+          <span>{error}</span>
         </div>
       )}
 
@@ -268,7 +340,7 @@ export function Questions() {
         <button
           type="button"
           onClick={() => { setIndex(index - 1); setError(""); }}
-          className="mt-6 text-xs font-bold text-[var(--ux4g-text-neutral-secondary,#404040)] hover:underline"
+          className="mt-6 text-xs font-bold text-[var(--ux4g-text-neutral-secondary,#404040)] dark:text-neutral-400 hover:underline inline-flex items-center gap-1"
         >
           ← {t.questions.backBtn}
         </button>
@@ -282,23 +354,53 @@ export function Plan() {
   const f = useFlow();
   const t = getTranslation(f.language);
   const item = data[f.intent];
+  const isTransfer = f.intent === "ownership-transfer";
 
   return (
     <Step number={t.plan.step} title={t.plan.title}>
-      <p className="text-sm text-[var(--ux4g-text-neutral-secondary,#404040)]">
+      <p className="text-sm text-[var(--ux4g-text-neutral-secondary,#404040)] dark:text-neutral-300">
         {t.plan.subtitle}
       </p>
 
-      <ol className="ux4g-card ux4g-card-solid ux4g-card-vertical mt-6 divide-y divide-[var(--ux4g-border-neutral-subtle,#E5E5E5)]">
+      {/* Official Parivahan Fee Breakdown Card */}
+      <div className="mt-5 p-4 rounded-2xl border border-[var(--ux4g-color-primary-200,#B5D3FB)] dark:border-blue-900 bg-[var(--ux4g-color-primary-50,#EEF4FF)] dark:bg-blue-950/40 text-xs space-y-2.5 shadow-sm">
+        <div className="flex items-center justify-between">
+          <span className="font-extrabold text-[var(--ux4g-color-primary-600,#002B7F)] dark:text-blue-300 uppercase tracking-wider text-[11px]">
+            Official Statutory Fee Structure (MoRTH Gazette)
+          </span>
+          <span className="font-bold text-emerald-700 dark:text-emerald-400 bg-white dark:bg-neutral-900 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">
+            Total: {isTransfer ? "₹530" : "₹400"}
+          </span>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1 text-[11px]">
+          <div>
+            <span className="text-neutral-500 dark:text-neutral-400 block font-medium">Service Charge:</span>
+            <strong className="text-neutral-800 dark:text-neutral-200">{isTransfer ? "₹300 (Transfer)" : "₹200 (Renewal)"}</strong>
+          </div>
+          <div>
+            <span className="text-neutral-500 dark:text-neutral-400 block font-medium">Smart Card Form:</span>
+            <strong className="text-neutral-800 dark:text-neutral-200">₹200</strong>
+          </div>
+          <div>
+            <span className="text-neutral-500 dark:text-neutral-400 block font-medium">Postal Delivery:</span>
+            <strong className="text-neutral-800 dark:text-neutral-200">{isTransfer ? "₹30 (Speed Post)" : "Included"}</strong>
+          </div>
+        </div>
+        <p className="text-[10px] text-neutral-500 dark:text-neutral-400 border-t border-blue-200 dark:border-blue-900/60 pt-2">
+          ⏱️ Estimated RTO Scrutiny & Smart-Card Dispatch: <strong>7–10 working days</strong> via India Post.
+        </p>
+      </div>
+
+      <ol className="ux4g-card ux4g-card-solid ux4g-card-vertical mt-5 divide-y divide-[var(--ux4g-border-neutral-subtle,#E5E5E5)] dark:divide-neutral-800 rounded-2xl border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm">
         {item.plan.map((x, i) => (
-          <li className="flex gap-4 p-5" key={x}>
+          <li className="flex gap-4 p-4 sm:p-5" key={x}>
             <span aria-hidden="true" className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[var(--ux4g-color-primary-600,#002B7F)] text-xs font-bold text-white shadow-sm">
               {i + 1}
             </span>
             <div>
-              <h2 className="text-sm font-bold text-[var(--ux4g-text-neutral-primary,#171717)]">{x}</h2>
-              <p className="mt-0.5 text-xs text-[var(--ux4g-text-neutral-secondary,#404040)]">
-                {i === 0 ? "Configured based on your responses." : "Verified during state transport workflow."}
+              <h2 className="text-sm font-bold text-[var(--ux4g-text-neutral-primary,#171717)] dark:text-white">{x}</h2>
+              <p className="mt-0.5 text-xs text-[var(--ux4g-text-neutral-secondary,#404040)] dark:text-neutral-400">
+                {i === 0 ? "Formulated according to statutory rules." : "Processed in compliance with MoRTH standards."}
               </p>
             </div>
           </li>
@@ -309,7 +411,7 @@ export function Plan() {
         <button
           type="button"
           onClick={() => r.push("/upload")}
-          className="ux4g-btn ux4g-btn-primary ux4g-btn-md flex items-center justify-center gap-1.5 w-full sm:w-auto"
+          className="ux4g-btn ux4g-btn-primary ux4g-btn-md flex items-center justify-center gap-1.5 w-full sm:w-auto font-bold shadow-sm"
         >
           <span>{t.plan.continueBtn}</span>
           <ChevronRight size={16} />
@@ -338,7 +440,7 @@ export function Uploads() {
   return (
     <Step number={t.upload.step} title={t.upload.title}>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs text-[var(--ux4g-text-neutral-secondary,#404040)]">
+        <p className="text-xs text-[var(--ux4g-text-neutral-secondary,#404040)] dark:text-neutral-400">
           {t.upload.subtitle}
         </p>
         <SecureBadge />
@@ -346,21 +448,21 @@ export function Uploads() {
 
       <div className="mt-6 space-y-3">
         {item.documents.map((n) => (
-          <div className="ux4g-card ux4g-card-solid ux4g-card-vertical flex flex-wrap items-center justify-between gap-3 p-4" key={n}>
+          <div className="ux4g-card ux4g-card-solid ux4g-card-vertical flex flex-wrap items-center justify-between gap-3 p-4 rounded-2xl border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm" key={n}>
             <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] text-[var(--ux4g-text-brand-primary-default,#002B7F)]">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] dark:bg-neutral-800 text-[var(--ux4g-text-brand-primary-default,#002B7F)] dark:text-blue-400">
                 <FileText size={18} />
               </span>
               <div>
-                <h2 className="text-xs font-bold text-[var(--ux4g-text-neutral-primary,#171717)]">
+                <h2 className="text-xs font-bold text-[var(--ux4g-text-neutral-primary,#171717)] dark:text-white">
                   {n} <span className="ux4g-tag-tonal-brand ux4g-tag-s ml-1 font-mono text-[10px]">({t.questions.required})</span>
                 </h2>
                 {f.uploads[n] ? (
-                  <p className="flex items-center gap-1 text-[11px] font-bold text-[var(--ux4g-color-green-700,#00522C)] mt-0.5">
+                  <p className="flex items-center gap-1 text-[11px] font-bold text-[var(--ux4g-color-green-700,#00522C)] dark:text-emerald-400 mt-0.5">
                     <Check size={12} /> {f.uploads[n]}
                   </p>
                 ) : (
-                  <p className="text-[11px] text-[var(--ux4g-text-neutral-tertiary,#737373)] mt-0.5">
+                  <p className="text-[11px] text-[var(--ux4g-text-neutral-tertiary,#737373)] dark:text-neutral-400 mt-0.5">
                     PDF, JPG, or PNG (Max 5MB)
                   </p>
                 )}
@@ -385,7 +487,7 @@ export function Uploads() {
         <button
           type="button"
           onClick={() => r.push("/review")}
-          className="ux4g-btn ux4g-btn-primary ux4g-btn-md flex items-center justify-center gap-1.5 w-full sm:w-auto"
+          className="ux4g-btn ux4g-btn-primary ux4g-btn-md flex items-center justify-center gap-1.5 w-full sm:w-auto font-bold shadow-sm"
         >
           <span>{t.upload.continueBtn}</span>
           <ChevronRight size={16} />
@@ -413,6 +515,7 @@ export function Review() {
   const missingAnswers = item.questions.filter((question) => !f.answers[question.id]?.trim());
   const missingDocuments = item.documents.filter((document) => !f.uploads[document]?.trim());
   const looksReady = missingAnswers.length === 0 && missingDocuments.length === 0;
+  const questionMap = new Map(item.questions.map((q) => [q.id, q.label]));
 
   const handleSubmit = async () => {
     if (!f.citizen) {
@@ -446,23 +549,23 @@ export function Review() {
 
   return (
     <Step number={t.review.step} title={t.review.title}>
-      <p className="text-sm text-[var(--ux4g-text-neutral-secondary,#404040)]">
+      <p className="text-sm text-[var(--ux4g-text-neutral-secondary,#404040)] dark:text-neutral-300">
         {t.review.subtitle}
       </p>
 
-      <div className="ux4g-card ux4g-card-solid ux4g-card-vertical mt-6 p-6 space-y-5">
-        <h2 className="text-base font-bold text-[var(--ux4g-text-neutral-primary,#171717)] border-b border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] pb-2">
-          {item.label}
+      <div className="ux4g-card ux4g-card-solid ux4g-card-vertical mt-6 p-6 space-y-5 rounded-2xl border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm">
+        <h2 className="text-base font-extrabold text-[var(--ux4g-text-neutral-primary,#171717)] dark:text-white border-b border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] dark:border-neutral-800 pb-2">
+          {item.label} — Official Summary
         </h2>
 
         <dl className="grid gap-4 sm:grid-cols-2">
           {Object.entries(f.answers).map(([key, value]) => (
             <div key={key} className="space-y-0.5">
-              <dt className="text-[10px] font-bold uppercase tracking-wider text-[var(--ux4g-text-neutral-tertiary,#737373)]">
-                {key}
+              <dt className="text-[10px] font-bold uppercase tracking-wider text-[var(--ux4g-text-neutral-tertiary,#737373)] dark:text-neutral-400">
+                {questionMap.get(key) || key}
               </dt>
-              <dd className="font-semibold text-sm text-[var(--ux4g-text-neutral-primary,#171717)]">
-                {value}
+              <dd className="font-semibold text-xs text-[var(--ux4g-text-neutral-primary,#171717)] dark:text-white">
+                {value || "—"}
               </dd>
             </div>
           ))}

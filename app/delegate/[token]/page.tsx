@@ -272,21 +272,71 @@ export default function DelegatePage() {
               <h2 className="text-lg font-extrabold text-[var(--ux4g-text-neutral-primary,#171717)] dark:text-white mt-1">
                 {currentQ.label}
               </h2>
+              {(currentQ as any).hint && (
+                <p className="text-xs text-[var(--ux4g-text-brand-primary-default,#002B7F)] dark:text-blue-300 font-medium mt-1">
+                  💡 {(currentQ as any).hint}
+                </p>
+              )}
               <p className="text-xs text-[var(--ux4g-text-neutral-secondary,#404040)] dark:text-neutral-400 mt-0.5">
                 Answer on behalf of {ownerName}
               </p>
             </div>
 
-            {currentQ.options ? (
-              <div className="grid gap-3 sm:grid-cols-2 pt-2">
+            {(currentQ as any).type === "select" && currentQ.options ? (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleAnswerSubmit(inputVal);
+                }}
+                className="space-y-4 pt-2"
+              >
+                <div>
+                  <select
+                    value={inputVal}
+                    onChange={(e) => setInputVal(e.target.value)}
+                    className="w-full rounded-xl border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] dark:border-neutral-700 bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] dark:bg-neutral-800 px-4 py-3 text-xs text-[var(--ux4g-text-neutral-primary,#171717)] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#002B7F]"
+                  >
+                    <option value="">-- Please select from list --</option>
+                    {currentQ.options.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
+                  </select>
+                  {qError && (
+                    <p className="text-[11px] font-semibold text-red-600 dark:text-red-400 mt-1.5 flex items-center gap-1">
+                      <AlertCircle size={12} /> {qError}
+                    </p>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between pt-2">
+                  {currentQIndex > 0 ? (
+                    <button
+                      type="button"
+                      onClick={() => setCurrentQIndex((prev) => prev - 1)}
+                      className="ux4g-btn ux4g-btn-outline-primary ux4g-btn-sm"
+                    >
+                      <ChevronLeft size={14} /> Back
+                    </button>
+                  ) : <div />}
+                  <button type="submit" className="ux4g-btn ux4g-btn-primary ux4g-btn-sm font-bold inline-flex items-center gap-1">
+                    <span>Continue</span>
+                    <ChevronRight size={14} />
+                  </button>
+                </div>
+              </form>
+            ) : currentQ.options && (currentQ as any).type !== "select" ? (
+              <div className="grid gap-3 sm:grid-cols-1 pt-2">
                 {currentQ.options.map((opt) => (
                   <button
                     key={opt}
                     type="button"
                     onClick={() => handleAnswerSubmit(opt)}
-                    className="p-4 rounded-xl border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] dark:border-neutral-700 bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] dark:bg-neutral-800 text-left font-bold text-xs hover:border-[#002B7F] hover:bg-[#EEF4FF]/50 dark:hover:bg-blue-950/40 text-[var(--ux4g-text-neutral-primary,#171717)] dark:text-white transition-all shadow-sm"
+                    className="p-4 rounded-xl border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] dark:border-neutral-700 bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] dark:bg-neutral-800 text-left font-bold text-xs hover:border-[#002B7F] hover:bg-[#EEF4FF]/50 dark:hover:bg-blue-950/40 text-[var(--ux4g-text-neutral-primary,#171717)] dark:text-white transition-all shadow-sm flex items-center justify-between"
                   >
-                    {opt}
+                    <span>{opt}</span>
+                    <ChevronRight size={14} className="text-neutral-400" />
                   </button>
                 ))}
               </div>
@@ -299,13 +349,23 @@ export default function DelegatePage() {
                 className="space-y-4 pt-2"
               >
                 <div>
-                  <input
-                    type="text"
-                    placeholder={currentQ.placeholder || "Enter details..."}
-                    value={inputVal}
-                    onChange={(e) => setInputVal(e.target.value)}
-                    className="w-full rounded-xl border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] dark:border-neutral-700 bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] dark:bg-neutral-800 px-4 py-3 text-xs text-[var(--ux4g-text-neutral-primary,#171717)] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#002B7F]"
-                  />
+                  {(currentQ as any).type === "textarea" ? (
+                    <textarea
+                      rows={3}
+                      placeholder={currentQ.placeholder || "Enter details..."}
+                      value={inputVal}
+                      onChange={(e) => setInputVal(e.target.value)}
+                      className="w-full rounded-xl border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] dark:border-neutral-700 bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] dark:bg-neutral-800 px-4 py-3 text-xs text-[var(--ux4g-text-neutral-primary,#171717)] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#002B7F]"
+                    />
+                  ) : (
+                    <input
+                      type={(currentQ as any).type === "date" ? "date" : (currentQ as any).type === "number" ? "number" : "text"}
+                      placeholder={currentQ.placeholder || "Enter details..."}
+                      value={inputVal}
+                      onChange={(e) => setInputVal(e.target.value)}
+                      className="w-full rounded-xl border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] dark:border-neutral-700 bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] dark:bg-neutral-800 px-4 py-3 text-xs text-[var(--ux4g-text-neutral-primary,#171717)] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#002B7F]"
+                    />
+                  )}
                   {qError && (
                     <p className="text-[11px] font-semibold text-red-600 dark:text-red-400 mt-1.5 flex items-center gap-1">
                       <AlertCircle size={12} /> {qError}
@@ -430,12 +490,15 @@ export default function DelegatePage() {
                 Submitted Information
               </h4>
               <dl className="grid gap-2.5 sm:grid-cols-2 text-xs">
-                {Object.entries(answers).map(([key, val]) => (
-                  <div key={key}>
-                    <dt className="text-[10px] font-bold text-neutral-400 uppercase">{key}</dt>
-                    <dd className="font-semibold text-neutral-800 dark:text-neutral-200">{val || "Not provided"}</dd>
-                  </div>
-                ))}
+                {Object.entries(answers).map(([key, val]) => {
+                  const qLabel = item.questions.find((q) => q.id === key)?.label || key;
+                  return (
+                    <div key={key}>
+                      <dt className="text-[10px] font-bold text-neutral-400 uppercase">{qLabel}</dt>
+                      <dd className="font-semibold text-neutral-800 dark:text-neutral-200 mt-0.5">{val || "Not provided"}</dd>
+                    </div>
+                  );
+                })}
               </dl>
             </div>
 

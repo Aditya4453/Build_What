@@ -5,5 +5,39 @@
   "documents": [{ "id": "doc_1", "applicationId": "DLR-2026-10482", "documentType": "Current driving licence", "filename": "driving-licence.pdf", "validationStatus": "approved" }, { "id": "doc_2", "applicationId": "DLR-2026-10482", "documentType": "Address proof", "filename": "address-proof.pdf", "validationStatus": "processing" }],
   "documentChecks": [{ "id": "check_1", "documentId": "doc_1", "checkType": "Format verified", "status": "approved", "message": "PDF format is supported." }, { "id": "check_2", "documentId": "doc_1", "checkType": "File readable", "status": "approved", "message": "The file can be read." }, { "id": "check_3", "documentId": "doc_1", "checkType": "Signature present", "status": "approved", "message": "A signature is visible." }, { "id": "check_4", "documentId": "doc_2", "checkType": "Required information detected", "status": "processing", "message": "Waiting for mock validation." }],
   "payments": [{ "id": "pay_1", "applicationId": "DLR-2026-10482", "amount": 500, "transactionReference": "PP-PAY-2608142", "status": "success", "createdAt": "2026-08-24T09:01:00.000Z", "updatedAt": "2026-08-24T09:03:00.000Z" }],
-  "appointments": [{ "id": "apt_1", "applicationId": "DLR-2026-10482", "date": "", "time": "", "location": "", "status": "not-available" }]
+  "appointments": [{ "id": "apt_1", "applicationId": "DLR-2026-10482", "date": "", "time": "", "location": "", "status": "not-available" }],
+  "proactiveReminders": [
+    {
+      "id": "rem_1",
+      "userId": "usr_demo_001",
+      "documentType": "PUC Certificate",
+      "vehicleOrDocLabel": "Scooter - MH12AB1234",
+      "daysUntilExpiry": 5,
+      "reminderEnabled": false
+    },
+    {
+      "id": "rem_2",
+      "userId": "usr_demo_001",
+      "documentType": "Vehicle Insurance",
+      "vehicleOrDocLabel": "Car - DL01AB1234",
+      "daysUntilExpiry": 18,
+      "reminderEnabled": false
+    },
+    {
+      "id": "rem_3",
+      "userId": "usr_demo_001",
+      "documentType": "Driving License",
+      "vehicleOrDocLabel": "DL-0420110012345",
+      "daysUntilExpiry": 45,
+      "reminderEnabled": false
+    },
+    {
+      "id": "rem_4",
+      "userId": "usr_demo_001",
+      "documentType": "Fitness Certificate",
+      "vehicleOrDocLabel": "Commercial LMV - DL04CD9876",
+      "daysUntilExpiry": 24,
+      "reminderEnabled": false
+    }
+  ]
 }

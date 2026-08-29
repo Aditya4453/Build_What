@@ -1,24 +1,250 @@
 {
   "ownership-transfer": {
     "label": "Vehicle Ownership Transfer",
-    "description": "Transfer a vehicle into the buyer’s name after a sale.",
+    "description": "Transfer vehicle registration into the buyer’s name under Motor Vehicles Act (Forms 29 & 30).",
     "questions": [
-      { "id": "vehicle", "label": "What is the vehicle registration number?", "placeholder": "e.g. DL 01 AB 1234" },
-      { "id": "state", "label": "Which state is the vehicle currently registered in?", "options": ["Delhi", "Maharashtra", "Karnataka", "Tamil Nadu", "Other"] },
-      { "id": "loan", "label": "Is there an active loan on the vehicle?", "options": ["Yes, it is financed", "No, the loan is cleared"] }
+      {
+        "id": "vehicle",
+        "label": "What is the vehicle registration number?",
+        "placeholder": "e.g. DL 01 AB 1234 or MH 12 DE 5678",
+        "type": "text",
+        "hint": "Enter the exact registration number printed on your RC."
+      },
+      {
+        "id": "chassis",
+        "label": "What are the last 5 characters of the chassis number?",
+        "placeholder": "e.g. 54321",
+        "type": "text",
+        "hint": "Found on the vehicle's Registration Certificate (RC)."
+      },
+      {
+        "id": "state",
+        "label": "Which state and RTO is the vehicle currently registered in?",
+        "options": [
+          "Delhi - DL-01 (Mall Road)",
+          "Delhi - DL-04 (Janakpuri)",
+          "Maharashtra - MH-01 (Mumbai South)",
+          "Maharashtra - MH-12 (Pune)",
+          "Karnataka - KA-01 (Bengaluru Central)",
+          "Karnataka - KA-03 (Indiranagar)",
+          "Tamil Nadu - TN-01 (Chennai Central)",
+          "Uttar Pradesh - UP-16 (Noida)",
+          "Gujarat - GJ-01 (Ahmedabad)",
+          "West Bengal - WB-01 (Kolkata)",
+          "Other State RTO"
+        ],
+        "type": "select",
+        "hint": "Select the parent RTO where vehicle was originally registered."
+      },
+      {
+        "id": "transferType",
+        "label": "What is the reason / type of ownership transfer?",
+        "options": [
+          "Normal Sale / Purchase",
+          "Succession / Legal Heir Inheritance",
+          "Public Auction Purchase"
+        ],
+        "type": "radio",
+        "hint": "Standard sale requires Form 29 & 30; inheritance requires legal heir certificate."
+      },
+      {
+        "id": "jurisdiction",
+        "label": "Is the transfer within the same RTO jurisdiction?",
+        "options": [
+          "Within Same RTO / Same State",
+          "Inter-RTO / Inter-State (Requires Form 28 NOC)"
+        ],
+        "type": "radio",
+        "hint": "Inter-state transfer requires clearance No Objection Certificate (NOC)."
+      },
+      {
+        "id": "buyerName",
+        "label": "What is the full legal name of the buyer (transferee)?",
+        "placeholder": "e.g. Ramesh Kumar Sharma",
+        "type": "text",
+        "hint": "Must match the buyer's official Aadhaar or PAN card."
+      },
+      {
+        "id": "buyerFather",
+        "label": "What is the buyer's father's / husband's full name?",
+        "placeholder": "e.g. Satish Chandra Sharma",
+        "type": "text",
+        "hint": "Required for statutory Form 30 records."
+      },
+      {
+        "id": "buyerAddress",
+        "label": "What is the buyer's present residential address and PIN code?",
+        "placeholder": "e.g. Flat 402, Shanti Vihar, Janakpuri, New Delhi - 110058",
+        "type": "textarea",
+        "hint": "New Smart Card RC will be dispatched to this address via Speed Post."
+      },
+      {
+        "id": "saleAmount",
+        "label": "What is the agreed sale consideration value (₹)?",
+        "placeholder": "e.g. 250000",
+        "type": "number",
+        "hint": "Enter agreed purchase amount for Form 29 sale declaration."
+      },
+      {
+        "id": "loan",
+        "label": "Is there an active bank loan or hypothecation on the vehicle?",
+        "options": [
+          "No active loan (Ownership clear)",
+          "Yes, currently financed (Financier Form 35 NOC attached)"
+        ],
+        "type": "radio",
+        "hint": "If financed, Form 35 and bank clearance NOC must be submitted."
+      }
     ],
-    "plan": ["Verify the vehicle and buyer details", "Prepare Forms 29 and 30", "Upload transfer documents", "Pay the transfer fee", "Receive the updated registration certificate"],
-    "documents": ["Registration Certificate (RC)", "Valid insurance certificate", "PUC certificate", "Buyer identity and address proof", "Seller identity proof"]
+    "plan": [
+      "Step 1: Vehicle & RC Record Verification (Forms 29 & 30 initialized)",
+      "Step 2: Buyer e-KYC, Address & Financier Clearance Validation",
+      "Step 3: Upload Mandatory Vehicle, Insurance & Identification Proofs",
+      "Step 4: Statutory Transfer Fee & Speed Post Delivery Payment (₹530)",
+      "Step 5: RTO Officer Scrutiny & Dispatch of Updated Smart Card RC"
+    ],
+    "documents": [
+      "Form 29 (Notice of Transfer of Ownership in Duplicate)",
+      "Form 30 (Application for Intimation & Transfer of Ownership)",
+      "Original Vehicle Registration Certificate (RC)",
+      "Valid Vehicle Insurance Policy Certificate",
+      "Valid Pollution Under Control (PUC) Certificate",
+      "Buyer Identity & Address Proof (Aadhaar / Passport)",
+      "Buyer PAN Card (or Form 60)",
+      "Seller Identity Proof (PAN / Aadhaar)",
+      "Financier Form 35 NOC (if vehicle is financed)"
+    ]
   },
   "license-renewal": {
     "label": "Driving Licence Renewal",
-    "description": "Renew your driving licence before or after expiry.",
+    "description": "Renew your existing driving licence before or after expiry under MoRTH Sarathi regulations.",
     "questions": [
-      { "id": "licence", "label": "What is your driving licence number?", "placeholder": "Enter licence number" },
-      { "id": "state", "label": "Which state issued your licence?", "options": ["Delhi", "Maharashtra", "Karnataka", "Tamil Nadu", "Other"] },
-      { "id": "expired", "label": "Has your licence already expired?", "options": ["Yes", "No"] }
+      {
+        "id": "licence",
+        "label": "What is your existing Driving Licence (DL) number?",
+        "placeholder": "e.g. DL-0420110012345 or MH-1220180056789",
+        "type": "text",
+        "hint": "Enter the 16-character alphanumeric DL number from your card."
+      },
+      {
+        "id": "dob",
+        "label": "What is your date of birth as recorded on your licence?",
+        "placeholder": "YYYY-MM-DD",
+        "type": "date",
+        "hint": "Must match the date of birth in Sarathi database."
+      },
+      {
+        "id": "state",
+        "label": "Which state and RTO issued your driving licence?",
+        "options": [
+          "Delhi - DL-01 (Mall Road)",
+          "Delhi - DL-04 (Janakpuri)",
+          "Maharashtra - MH-01 (Mumbai South)",
+          "Maharashtra - MH-12 (Pune)",
+          "Karnataka - KA-01 (Bengaluru Central)",
+          "Karnataka - KA-03 (Indiranagar)",
+          "Tamil Nadu - TN-01 (Chennai Central)",
+          "Uttar Pradesh - UP-16 (Noida)",
+          "Gujarat - GJ-01 (Ahmedabad)",
+          "West Bengal - WB-01 (Kolkata)",
+          "Other State RTO"
+        ],
+        "type": "select",
+        "hint": "Select your parent licensing authority."
+      },
+      {
+        "id": "vehicleClass",
+        "label": "What category of licence are you renewing?",
+        "options": [
+          "Non-Transport (MCWG - Motorcycle & LMV - Light Motor Vehicle)",
+          "Transport / Commercial Heavy Vehicle"
+        ],
+        "type": "radio",
+        "hint": "Commercial transport licences require Form 1-A medical certification."
+      },
+      {
+        "id": "expiryStatus",
+        "label": "What is your licence validity / expiry timeline?",
+        "options": [
+          "Expiring soon (Within 1 year before expiry)",
+          "Expired recently (Within 30-day statutory grace period)",
+          "Expired more than 1 year ago (May require driving skill re-test)"
+        ],
+        "type": "radio",
+        "hint": "You can apply for renewal up to 1 year in advance of expiry."
+      },
+      {
+        "id": "ageCategory",
+        "label": "What is your current age category?",
+        "options": [
+          "Under 40 years of age",
+          "40 years of age and above (Form 1-A Medical Certificate Required)"
+        ],
+        "type": "radio",
+        "hint": "Applicants aged 40+ require Form 1-A signed by a registered doctor."
+      },
+      {
+        "id": "medicalDeclaration",
+        "label": "Physical Fitness Self-Declaration (Form 1)",
+        "options": [
+          "I declare I am physically fit with sound vision & hearing (Form 1 Self-Certified)",
+          "I require special optical / prosthetic driving assistance"
+        ],
+        "type": "radio",
+        "hint": "Self-declaration of physical ability to operate motor vehicles safely."
+      },
+      {
+        "id": "bloodGroup",
+        "label": "What is your blood group?",
+        "options": [
+          "A+",
+          "A-",
+          "B+",
+          "B-",
+          "O+",
+          "O-",
+          "AB+",
+          "AB-",
+          "Unknown / Not Tested"
+        ],
+        "type": "select",
+        "hint": "Printed on your smart card DL for emergency medical response."
+      },
+      {
+        "id": "organDonor",
+        "label": "Do you wish to pledge for Organ Donation upon accidental death?",
+        "options": [
+          "Yes, I proudly pledge to donate my organs (Reflected on DL)",
+          "No, not at this time"
+        ],
+        "type": "radio",
+        "hint": "Government of India organ donor initiative."
+      },
+      {
+        "id": "addressChange",
+        "label": "Do you want to retain or update your residential address?",
+        "options": [
+          "Retain existing address as recorded in Sarathi",
+          "Update to new residential address (Proof of address attached)"
+        ],
+        "type": "radio",
+        "hint": "If updating address, valid proof of new address must be uploaded."
+      }
     ],
-    "plan": ["Confirm your licence record", "Complete the renewal application", "Upload identity and medical documents", "Pay the renewal fee", "Receive your renewed licence"],
-    "documents": ["Current driving licence", "Address proof", "Recent passport photograph", "Medical certificate (if applicable)"]
+    "plan": [
+      "Step 1: Sarathi DL Record & Bio-Metric Identity Verification",
+      "Step 2: Medical Fitness Assessment (Form 1 & Form 1-A Doctor Certificate)",
+      "Step 3: Upload Existing DL, Medical Forms, Address Proof & Photograph",
+      "Step 4: Online Renewal Fee & Smart Card Delivery Payment (₹400)",
+      "Step 5: RTO Licensing Officer Approval & Dispatch of Renewed Smart DL"
+    ],
+    "documents": [
+      "Original / Expiring Driving Licence Copy",
+      "Form 2 (Statutory Application for DL Renewal)",
+      "Form 1 (Self-Declaration of Physical Fitness)",
+      "Form 1-A (Medical Certificate signed by Registered Medical Practitioner)",
+      "Proof of Present Residential Address (Aadhaar / Voter ID / Passport)",
+      "Recent Passport Size Photograph (White Background)"
+    ]
   }
 }
