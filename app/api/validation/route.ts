@@ -8,6 +8,8 @@ const prototypeCheckLabel = (checkType: string) => {
   return checkType;
 };
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: Request) {
   try {
     const userId = await sessionUserId();

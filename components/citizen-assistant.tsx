@@ -3,10 +3,22 @@
 import { usePathname, useRouter } from "next/navigation";
 import { MessageCircle, Send, X, Bot, Sparkles } from "lucide-react";
 import { useState } from "react";
+import { useFlow } from "./flow-provider";
+import { getTranslation } from "@/lib/translations";
 
 export function CitizenAssistant() {
+  const { language } = useFlow();
+  const t = getTranslation(language);
   const [open, setOpen] = useState(false);
-  const [answer, setAnswer] = useState("Ask about your documents, payment, appointment, or next step.");
+  const [answer, setAnswer] = useState(
+    language === "hi"
+      ? "दस्तावेज़, भुगतान या अगले चरण के बारे में पूछें।"
+      : language === "mr"
+      ? "कागदपत्रे, पेमेंट किंवा पुढील टप्प्याबद्दल विचारा."
+      : language === "ta"
+      ? "ஆவணங்கள், கட்டணம் அல்லது அடுத்த படி பற்றி கேளுங்கள்."
+      : "Ask about your documents, payment, appointment, or next step."
+  );
   const [loading, setLoading] = useState(false);
   const path = usePathname();
   const r = useRouter();
@@ -32,14 +44,15 @@ export function CitizenAssistant() {
 
   return (
     <>
-      {/* Help floating button trigger */}
+      {/* Help floating button trigger using UX4G Primary Button */}
       <button
+        type="button"
         onClick={() => setOpen(true)}
         aria-label="Open application help assistant"
-        className="fixed bottom-6 right-6 z-30 inline-flex items-center gap-2 rounded-full bg-primary text-xs font-bold text-surface shadow-civic border border-outline-variant/10 hover:opacity-90 transition-opacity btn-chat-trigger"
+        className="ux4g-btn ux4g-btn-primary ux4g-btn-md fixed bottom-6 right-6 z-30 flex items-center gap-2 rounded-full shadow-lg"
       >
-        <MessageCircle size={15} />
-        Assistant Help
+        <MessageCircle size={16} />
+        <span>Assistant Help</span>
       </button>
 
       {open && (
@@ -47,47 +60,48 @@ export function CitizenAssistant() {
           role="dialog"
           aria-modal="true"
           aria-label="Application help assistant"
-          className="fixed bottom-[88px] right-6 z-40 w-[min(90vw,360px)] rounded-2xl border border-outline-variant bg-surface-low p-5 shadow-civic animate-in fade-in slide-in-from-bottom-4 duration-200"
+          className="ux4g-card ux4g-card-solid ux4g-card-vertical fixed bottom-20 right-6 z-40 w-[min(90vw,360px)] p-5 shadow-2xl animate-in zoom-in-95 duration-150"
         >
           {/* Chat header area */}
-          <div className="flex items-center justify-between pb-3 border-b border-outline-variant/40">
+          <div className="flex items-center justify-between pb-3 border-b border-[var(--ux4g-border-neutral-subtle,#E5E5E5)]">
             <div className="flex items-center gap-2">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-secondary/15 text-secondary">
-                <Sparkles size={13} />
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--ux4g-color-primary-50,#F3F0FF)] dark:bg-[var(--ux4g-color-primary-950,#1A0E3D)] text-[var(--ux4g-color-primary-600,#4A2BC2)]">
+                <Sparkles size={14} />
               </span>
               <div>
-                <h2 className="text-xs font-bold text-primary flex items-center gap-1">
+                <h2 className="text-xs font-bold text-[var(--ux4g-text-neutral-primary,#171717)] flex items-center gap-1">
                   Parivahan Guide
                 </h2>
-                <p className="text-[9px] uppercase tracking-wider font-semibold text-outline">Smart Assistant</p>
+                <p className="text-[10px] uppercase tracking-wider font-semibold text-[var(--ux4g-text-neutral-tertiary,#737373)]">
+                  Smart Assistant
+                </p>
               </div>
             </div>
             <button
+              type="button"
               onClick={() => setOpen(false)}
               aria-label="Close assistant"
-              className="flex h-6 w-6 items-center justify-center rounded-full text-outline transition-colors hover:bg-surface-container hover:text-primary"
+              className="ux4g-icon-btn ux4g-icon-btn-outline-primary ux4g-icon-btn-xs"
             >
               <X size={14} />
             </button>
           </div>
 
-          <p className="mt-3 text-[10px] leading-normal text-outline">
+          <p className="mt-3 text-[11px] leading-normal text-[var(--ux4g-text-neutral-secondary,#404040)]">
             Uses saved application context in MongoDB. Will not make any unauthorized changes.
           </p>
 
           {/* Conversational bubble container */}
           <div aria-live="polite" className="mt-4 space-y-3">
             <div className="flex items-start gap-2.5">
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-primary text-surface text-[10px] font-bold mt-0.5">
-                <Bot size={11} />
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--ux4g-color-primary-600,#4A2BC2)] text-white text-[10px] font-bold mt-0.5 shadow-sm">
+                <Bot size={12} />
               </span>
-              <div className="rounded-2xl rounded-tl-none bg-surface-container/70 border border-outline-variant/40 px-3.5 py-2.5 text-xs text-primary leading-relaxed shadow-sm">
+              <div className="rounded-xl rounded-tl-none bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] px-3.5 py-2.5 text-xs text-[var(--ux4g-text-neutral-primary,#171717)] leading-relaxed shadow-sm">
                 {loading ? (
-                  <span className="flex items-center gap-1.5 font-medium text-outline">
-                    <span className="h-1 w-1 bg-outline rounded-full animate-bounce" />
-                    <span className="h-1 w-1 bg-outline rounded-full animate-bounce delay-75" />
-                    <span className="h-1 w-1 bg-outline rounded-full animate-bounce delay-150" />
-                    Checking application database…
+                  <span className="flex items-center gap-2 font-medium text-[var(--ux4g-text-neutral-secondary,#404040)]">
+                    <span className="ux4g-spinner-primary-full ux4g-spinner-xs" role="status" aria-label="Loading" />
+                    <span>Checking application database…</span>
                   </span>
                 ) : (
                   answer
@@ -105,30 +119,36 @@ export function CitizenAssistant() {
             }}
             className="mt-4 flex gap-1.5"
           >
-            <label className="sr-only" htmlFor="assistant-question">Ask a question</label>
-            <input
-              id="assistant-question"
-              required
-              name="question"
-              className="min-w-0 flex-1 rounded-xl border border-outline-variant/60 bg-surface-container/50 px-3.5 py-2 text-xs focus:bg-surface-low focus:outline-none"
-              placeholder="e.g. Why no appointment?"
-            />
+            <label className="sr-only" htmlFor="assistant-question">
+              Ask a question
+            </label>
+            <div className="ux4g-input-container ux4g-input-sm ux4g-input-default flex-1">
+              <input
+                id="assistant-question"
+                required
+                name="question"
+                className="w-full rounded-md border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] px-3 py-2 text-xs text-[var(--ux4g-text-neutral-primary,#171717)] focus:outline-none"
+                placeholder="e.g. What is my next step?"
+              />
+            </div>
             <button
+              type="submit"
               disabled={loading}
-              className="btn-primary min-w-[36px] px-0 justify-center rounded-xl py-2.5"
+              className="ux4g-btn ux4g-btn-primary ux4g-btn-sm min-w-[36px] px-2.5 justify-center"
               aria-label="Ask assistant"
             >
-              <Send size={12} />
+              <Send size={13} />
             </button>
           </form>
 
           {path !== "/track" && (
             <button
+              type="button"
               onClick={() => {
                 setOpen(false);
                 r.push("/track");
               }}
-              className="mt-3.5 block text-center w-full text-[10px] font-extrabold tracking-wider uppercase text-secondary hover:underline"
+              className="mt-3.5 block text-center w-full text-[10px] font-bold tracking-wider uppercase text-[var(--ux4g-text-brand-primary-default,#4A2BC2)] hover:underline"
             >
               View Application status log
             </button>

@@ -4,10 +4,12 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Shell } from "@/components/shell";
 import { useFlow } from "@/components/flow-provider";
+import { getTranslation } from "@/lib/translations";
 
 export default function Page() {
   const r = useRouter();
   const f = useFlow();
+  const t = getTranslation(f.language);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -90,26 +92,28 @@ export default function Page() {
     <Shell>
       <section
         aria-labelledby="sign-in-title"
-        className="mx-auto flex min-h-[calc(100vh-140px)] max-w-md flex-col justify-center px-6 py-10"
+        className="mx-auto flex min-h-[calc(100vh-160px)] max-w-md flex-col justify-center px-4 py-10 sm:px-6"
       >
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-secondary">
-          MongoDB Secured Portal
-        </p>
-        <h1 id="sign-in-title" className="mt-1 text-2xl font-bold tracking-tight text-primary">
-          Continue to portal
+        <div className="mb-2">
+          <span className="ux4g-tag-tonal-brand ux4g-tag-s">
+            MongoDB Secured Portal
+          </span>
+        </div>
+        <h1 id="sign-in-title" className="text-2xl font-extrabold tracking-tight text-[var(--ux4g-text-neutral-primary,#171717)] sm:text-3xl">
+          {t.signIn.title}
         </h1>
-        <p className="mt-2 text-xs text-outline leading-relaxed">
-          Your credentials and application logs are saved directly in MongoDB.
+        <p className="mt-2 text-xs text-[var(--ux4g-text-neutral-secondary,#404040)] leading-relaxed">
+          {t.signIn.subtitle}
         </p>
 
-        <div className="card mt-6 p-6 space-y-4">
-          <h2 className="text-sm font-bold text-primary border-b border-outline-variant/40 pb-2 uppercase tracking-wide">
+        <div className="ux4g-card ux4g-card-solid ux4g-card-vertical mt-6 p-6 space-y-4 shadow-sm">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-[var(--ux4g-text-neutral-secondary,#404040)] border-b border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] pb-2">
             Citizen Session
           </h2>
-          
-          <div className="space-y-1">
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-outline" htmlFor="email-input">
-              Email Address
+
+          <div className="ux4g-input-container ux4g-input-md ux4g-input-default space-y-1">
+            <label className="block text-xs font-bold uppercase tracking-wider text-[var(--ux4g-text-neutral-secondary,#404040)]" htmlFor="email-input">
+              {t.signIn.emailLabel}
             </label>
             <input
               id="email-input"
@@ -117,13 +121,13 @@ export default function Page() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@example.com"
-              className="w-full rounded-lg border border-outline-variant px-4 py-2.5 text-xs bg-surface-container focus:outline-none"
+              className="w-full rounded-md border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] px-4 py-2.5 text-xs text-[var(--ux4g-text-neutral-primary,#171717)] focus:outline-none"
             />
           </div>
 
-          <div className="space-y-1">
-            <label className="block text-[11px] font-bold uppercase tracking-wider text-outline" htmlFor="password-input">
-              Password
+          <div className="ux4g-input-container ux4g-input-md ux4g-input-default space-y-1">
+            <label className="block text-xs font-bold uppercase tracking-wider text-[var(--ux4g-text-neutral-secondary,#404040)]" htmlFor="password-input">
+              {t.signIn.passwordLabel}
             </label>
             <input
               id="password-input"
@@ -131,46 +135,48 @@ export default function Page() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full rounded-lg border border-outline-variant px-4 py-2.5 text-xs bg-surface-container focus:outline-none"
+              className="w-full rounded-md border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] px-4 py-2.5 text-xs text-[var(--ux4g-text-neutral-primary,#171717)] focus:outline-none"
             />
-            <p className="text-[10px] text-outline mt-1 font-medium leading-relaxed">
-              Enter any new password to register, or use your existing password to log in.
+            <p className="text-[11px] text-[var(--ux4g-text-neutral-tertiary,#737373)] mt-1 leading-relaxed">
+              Enter any password to register, or use your existing password to log in.
             </p>
           </div>
 
           <button
+            type="button"
             onClick={() => handleSignIn(false)}
             disabled={loading}
-            className="btn-primary w-full py-2.5 font-bold text-xs"
+            className="ux4g-btn ux4g-btn-primary ux4g-btn-md w-full justify-center"
           >
-            {loading ? "Authenticating..." : "Sign In / Register"}
+            {loading ? "Authenticating..." : t.signIn.submitBtn}
           </button>
 
           <div className="relative my-4 flex items-center justify-center">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-outline-variant/60"></div>
+              <div className="w-full border-t border-[var(--ux4g-border-neutral-subtle,#E5E5E5)]"></div>
             </div>
-            <span className="relative bg-surface-low px-3 text-[10px] uppercase font-bold tracking-wider text-outline">
+            <span className="relative bg-[var(--ux4g-bg-neutral-elevated,#FFFFFF)] px-3 text-[10px] uppercase font-bold tracking-wider text-[var(--ux4g-text-neutral-tertiary,#737373)]">
               Or Quick Sign In
             </span>
           </div>
 
-          <p className="text-[10px] font-medium text-outline text-center leading-relaxed">
-            Test account: <span className="bg-surface-container font-mono px-1 py-0.5 rounded text-primary">citizen@example.demo</span> · password <span className="bg-surface-container font-mono px-1 py-0.5 rounded text-[#2c3d52]">demo123</span>
+          <p className="text-[11px] font-medium text-[var(--ux4g-text-neutral-secondary,#404040)] text-center leading-relaxed">
+            Test account: <span className="bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] font-mono px-1.5 py-0.5 rounded text-[var(--ux4g-text-neutral-primary,#171717)]">citizen@example.demo</span> · password <span className="bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] font-mono px-1.5 py-0.5 rounded text-[var(--ux4g-text-neutral-primary,#171717)]">demo123</span>
           </p>
 
           <button
+            type="button"
             onClick={() => handleSignIn(true)}
             disabled={loading}
-            className="btn-secondary w-full py-2.5 text-xs"
+            className="ux4g-btn ux4g-btn-outline-primary ux4g-btn-md w-full justify-center"
           >
-            Use Demo Citizen Account
+            {t.signIn.demoAccountBtn}
           </button>
 
           {error && (
-            <p role="alert" className="mt-3 text-xs font-semibold text-[#b3261e] border border-[#f2b8b5] bg-[#ffe4e1] rounded-lg p-2.5 text-center leading-relaxed animate-in fade-in duration-200">
+            <div role="alert" className="ux4g-alert ux4g-alert-error p-3 text-xs font-semibold text-center">
               {error}
-            </p>
+            </div>
           )}
         </div>
       </section>

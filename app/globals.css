@@ -1,261 +1,52 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --font-family: var(--font-inter), 'Nirmala UI', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
-
-  /* Typography Scale variables */
-  --text-xxs: 0.625rem;       /* 10px */
-  --lh-xxs: 0.875rem;          /* 14px */
-  --text-xs: 0.75rem;          /* 12px */
-  --lh-xs: 1rem;               /* 16px */
-  --text-sm: 0.875rem;         /* 14px */
-  --lh-sm: 1.25rem;            /* 20px */
-  --text-base: 1rem;           /* 16px */
-  --lh-base: 1.5rem;           /* 24px */
-  --text-lg: 1.125rem;         /* 18px */
-  --lh-lg: 1.75rem;            /* 28px */
-  --text-xl: 1.25rem;          /* 20px */
-  --lh-xl: 1.875rem;           /* 30px */
-  --text-2xl: 1.5rem;          /* 24px */
-  --lh-2xl: 2rem;              /* 32px */
-  --text-3xl: 1.875rem;        /* 30px */
-  --lh-3xl: 2.25rem;           /* 36px */
-  --text-4xl: 2.25rem;         /* 36px */
-  --lh-4xl: 2.5rem;            /* 40px */
-  
-  /* Light Theme Colors */
-  --color-primary: #002045; /* Deep navy primary text/elements */
-  --color-primary-container: #1b2d4a; /* Lighter primary container */
-  --color-secondary: #13696A; /* Calm civic teal accent */
-  --color-surface: #F9F9FF; /* Page background */
-  --color-surface-low: #ffffff; /* Page Card background */
-  --color-surface-container: #f1f5f9; /* Subtle input background */
-  --color-outline: #64748b; /* Slate 500 secondary text */
-  --color-outline-variant: #e2e8f0; /* Slate 200 border accent */
-  --color-ink: #0b1529;
-  --color-muted: #475569; /* Slate 600 secondary layout text */
-
-  /* Additional Custom Tokens */
-  --bg-page: #F9F9FF;
-  --bg-gradient: url('/images/Background_light.png');
-  --bg-card: #ffffff;
-  --border-card: #f1f5f9;
-  --shadow-card: 0 4px 20px -2px rgba(11, 21, 41, 0.03), 0 2px 8px -1px rgba(11, 21, 41, 0.02);
-  --button-hover: #1e293b;
+  --font-family: 'Noto Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --ux4g-border-neutral-subtle: var(--ux4g-border-color-neutral-subtle, var(--ux4g-color-neutral-200));
 }
 
-[data-theme="dark"] {
-  /* Dark Theme Colors */
-  --color-primary: #f8fafc; /* Near white primary text */
-  --color-primary-container: #e2e8f0;
-  --color-secondary: #13696A; /* Keep the civic accent consistent */
-  --color-surface: #030712; /* Deep dark page background */
-  --color-surface-low: #0f172a; /* Slightly lighter dark card base */
-  --color-surface-container: #1e293b; /* Input elements background */
-  --color-outline: #94a3b8;
-  --color-outline-variant: #1e293b; /* Subtle dark border line */
-  --color-ink: #f8fafc;
-  --color-muted: #94a3b8;
-
-  /* Additional Custom Tokens */
-  --bg-page: #030712;
-  --bg-gradient: url('/images/Background_dark.png');
-  --bg-card: #0f172a;
-  --border-card: #1e293b;
-  --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-  --button-hover: #f1f5f9;
+:root[data-theme="dark"] {
+  --ux4g-border-neutral-subtle: var(--ux4g-color-neutral-800);
 }
 
 * {
   box-sizing: border-box;
 }
 
+html {
+  color-scheme: light;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
+
 body {
   margin: 0;
-  background-color: var(--bg-page);
-  background-image: var(--bg-gradient);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  color: var(--color-ink);
+  background-color: var(--ux4g-bg-neutral, #FAFAFA);
+  color: var(--ux4g-text-neutral-primary, #171717);
   font-family: var(--font-family);
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.text-ink {
-  color: var(--color-ink) !important;
+/* Base focus outline per UX4G WCAG 2.1 AA contract */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--ux4g-color-primary-600, #4A2BC2);
+  outline-offset: 2px;
 }
 
-.text-muted {
-  color: var(--color-outline) !important;
+/* Standard UX4G card container transition and border alignment */
+.card,
+.ux4g-card {
+  background-color: var(--ux4g-bg-neutral-elevated, #FFFFFF);
+  border-color: var(--ux4g-border-neutral-subtle, #E5E5E5);
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
-
-button, input, select, textarea {
-  font-family: inherit;
-}
-
-button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible, label:focus-within {
-  outline: 3px solid var(--color-secondary);
-  outline-offset: 3px;
-}
-
-/* Card Visual System styling */
-.card {
-  border-radius: 12px;
-  border: 1px solid var(--color-outline-variant);
-  background-color: var(--color-surface-low);
-  box-shadow: var(--shadow-card);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Form Controls & Interactions */
-input[type="text"], input[type="email"], input[type="password"], select {
-  background-color: var(--color-surface-container);
-  border: 1px solid var(--color-outline-variant);
-  color: var(--color-ink);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, select:focus {
-  border-color: var(--color-secondary);
-  box-shadow: 0 0 0 1px var(--color-secondary);
-}
-
-/* Buttons System styling */
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border-radius: 8px;
-  background-color: var(--color-primary);
-  color: var(--color-surface);
-  padding: 10px 20px !important;
-  font-size: 0.875rem;
-  font-weight: 600;
-  transition: background-color 0.2s ease, opacity 0.2s ease;
-}
-
-.btn-primary:hover:not(:disabled) {
-  opacity: 0.9;
-}
-
-.btn-primary:active:not(:disabled) {
-  opacity: 0.8;
-}
-
-.btn-primary:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
-}
-
-.btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border-radius: 8px;
-  border: 1px solid var(--color-outline-variant);
-  background-color: var(--color-surface-low);
-  color: var(--color-primary);
-  padding: 10px 20px !important;
-  font-size: 0.875rem;
-  font-weight: 600;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
-}
-
-.btn-secondary:hover:not(:disabled) {
-  background-color: var(--color-surface-container);
-  border-color: var(--color-outline);
-}
-
-.btn-secondary:disabled {
-  cursor: not-allowed;
-  opacity: 0.55;
-}
-
-/* Custom bulletproof paddings to bypass Tailwind CSS preflight padding resets */
-.btn-task {
-  padding: 10px 18px !important;
-}
-
-.btn-chat-trigger {
-  padding: 10px 18px !important;
-}
-
-/* Explicit class-level overrides in dark-mode to force Tailwind overrides */
-[data-theme="dark"] body {
-  background-color: var(--bg-page) !important;
-  background-image: var(--bg-gradient) !important;
-  color: var(--color-ink) !important;
-}
-
-[data-theme="dark"] .bg-white,
-[data-theme="dark"] .bg-surface-low {
-  background-color: var(--color-surface-low) !important;
-}
-
-[data-theme="dark"] .bg-surface-low\/80,
-[data-theme="dark"] .bg-surface\/95 {
-  background-color: rgba(15, 23, 42, 0.9) !important;
-}
-
-[data-theme="dark"] .bg-surface-container,
-[data-theme="dark"] .bg-surface-container\/50,
-[data-theme="dark"] .bg-surface-container\/60 {
-  background-color: var(--color-surface-container) !important;
-}
-
-[data-theme="dark"] .text-primary {
-  color: var(--color-primary) !important;
-}
-
-[data-theme="dark"] .text-muted,
-[data-theme="dark"] .text-outline {
-  color: var(--color-outline) !important;
-}
-
-[data-theme="dark"] .card {
-  background-color: var(--color-surface-low) !important;
-  border-color: var(--color-outline-variant) !important;
-}
-
-[data-theme="dark"] .border-outline-variant,
-[data-theme="dark"] .border-outline-variant\/40,
-[data-theme="dark"] .border-outline-variant\/60 {
-  border-color: var(--color-outline-variant) !important;
-}
-
-/* Floating/Orbiting decorative icons animations */
-@keyframes floating-slow-1 {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-10px) rotate(3deg); }
-}
-
-@keyframes floating-slow-2 {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-14px) rotate(-4deg); }
-}
-
-@keyframes floating-slow-3 {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-8px) rotate(2deg); }
-}
-
-.animate-float-1 {
-  animation: floating-slow-1 8s ease-in-out infinite;
-}
-
-.animate-float-2 {
-  animation: floating-slow-2 10s ease-in-out infinite;
-}
-
-.animate-float-3 {
-  animation: floating-slow-3 9s ease-in-out infinite;
-}
-

@@ -61,68 +61,85 @@ function PaymentPageContent() {
     <Shell>
       <section
         aria-labelledby="payment-title"
-        className="mx-auto flex min-h-[calc(100vh-140px)] max-w-lg flex-col justify-center px-6 py-10"
+        className="mx-auto flex min-h-[calc(100vh-160px)] max-w-lg flex-col justify-center px-4 py-10 sm:px-6"
       >
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-secondary">
-          Application: {applicationId}
-        </p>
-        <h1 id="payment-title" className="mt-1 text-2xl font-bold tracking-tight text-primary">
+        <div className="mb-2">
+          <span className="ux4g-tag-tonal-brand ux4g-tag-s">
+            Application: {applicationId}
+          </span>
+        </div>
+        <h1 id="payment-title" className="text-2xl font-extrabold tracking-tight text-[var(--ux4g-text-neutral-primary,#171717)] sm:text-3xl">
           Fee Payment
         </h1>
 
-        <div className="card mt-6 p-6 space-y-6 animate-in fade-in duration-200" aria-live="polite">
-          <div className="border-b border-outline-variant/40 pb-4">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-outline">
+        <div className="ux4g-card ux4g-card-solid ux4g-card-vertical mt-6 p-6 space-y-6 shadow-sm" aria-live="polite">
+          <div className="border-b border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] pb-4">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--ux4g-text-neutral-tertiary,#737373)]">
               Government Fee
             </p>
-            <p className="mt-1 text-4xl font-extrabold tracking-tight text-primary">
+            <p className="mt-1 text-4xl font-extrabold tracking-tight text-[var(--ux4g-text-neutral-primary,#171717)]">
               ₹500
             </p>
-            <p className="mt-1 text-[11px] font-semibold text-outline">
-              Reference: {f.paymentReference}
+            <p className="mt-1 text-xs font-semibold text-[var(--ux4g-text-neutral-secondary,#404040)]">
+              Reference: <span className="font-mono">{f.paymentReference}</span>
             </p>
           </div>
 
-          <div className="rounded-xl bg-surface-container/60 border border-outline-variant/60 p-4">
-            <h2 className="text-xs font-bold text-primary uppercase tracking-wide">
+          <div className="ux4g-alert ux4g-alert-info p-4">
+            <h2 className="text-xs font-bold text-[var(--ux4g-text-neutral-primary,#171717)] uppercase tracking-wide">
               {state.title}
             </h2>
-            <p className="mt-1 text-xs text-outline leading-relaxed">
+            <p className="mt-1 text-xs text-[var(--ux4g-text-neutral-secondary,#404040)] leading-relaxed">
               {state.description}
             </p>
           </div>
 
           {f.paymentStatus === "pending" && (
-            <button onClick={retry} className="btn-primary w-full py-2.5 text-xs">
+            <button
+              type="button"
+              onClick={retry}
+              className="ux4g-btn ux4g-btn-primary ux4g-btn-md w-full justify-center"
+            >
               Confirm demo payment
             </button>
           )}
 
           {f.paymentStatus === "processing" && (
-            <p className="flex items-center justify-center gap-2 text-xs font-semibold text-primary py-2">
-              <RefreshCw className="animate-spin text-secondary" size={14} /> 
-              Processing safely…
-            </p>
+            <div className="flex items-center justify-center gap-2.5 py-3 text-xs font-semibold text-[var(--ux4g-text-neutral-primary,#171717)]">
+              <span className="ux4g-spinner-primary-full ux4g-spinner-sm" role="status" aria-label="Loading" />
+              <span>Processing simulated payment safely…</span>
+            </div>
           )}
 
           {f.paymentStatus === "success" && (
-            <a href={`/track?id=${encodeURIComponent(applicationId)}`} className="btn-primary w-full py-2.5 text-xs">
-              <Check size={14} /> Continue to application
+            <a
+              href={`/track?id=${encodeURIComponent(applicationId)}`}
+              className="ux4g-btn ux4g-btn-primary ux4g-btn-md w-full flex items-center justify-center gap-1.5"
+            >
+              <Check size={16} /> <span>Continue to application</span>
             </a>
           )}
 
           {f.paymentStatus === "failed" && (
-            <button onClick={retry} className="btn-primary w-full py-2.5 text-xs">
-              <RefreshCw size={14} /> Retry payment
+            <button
+              type="button"
+              onClick={retry}
+              className="ux4g-btn ux4g-btn-primary ux4g-btn-md w-full flex items-center justify-center gap-1.5"
+            >
+              <RefreshCw size={14} /> <span>Retry payment</span>
             </button>
           )}
 
           {f.paymentStatus === "confirmation-pending" && (
             <div className="space-y-3">
-              <button onClick={retry} className="btn-secondary w-full py-2.5 text-xs">
+              <button
+                type="button"
+                onClick={retry}
+                className="ux4g-btn ux4g-btn-outline-primary ux4g-btn-md w-full justify-center"
+              >
                 Check status
               </button>
-              <p className="text-[10px] font-semibold text-[#b3261e] text-center">
+              <p className="text-[11px] font-semibold text-[var(--ux4g-color-red-700,#8A1A16)] text-center">
                 Do not pay again. This will not create a duplicate payment.
               </p>
             </div>
@@ -135,13 +152,15 @@ function PaymentPageContent() {
 
 export default function Page() {
   return (
-    <Suspense fallback={
-      <Shell>
-        <section className="mx-auto flex min-h-[calc(100vh-140px)] max-w-lg flex-col justify-center px-6 py-10">
-          <p className="text-xs text-outline text-center">Loading payment...</p>
-        </section>
-      </Shell>
-    }>
+    <Suspense
+      fallback={
+        <Shell>
+          <section className="mx-auto flex min-h-[calc(100vh-160px)] max-w-lg flex-col justify-center px-4 py-10 text-center">
+            <p className="text-xs text-[var(--ux4g-text-neutral-secondary,#404040)]">Loading payment...</p>
+          </section>
+        </Shell>
+      }
+    >
       <PaymentPageContent />
     </Suspense>
   );

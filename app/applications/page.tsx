@@ -36,56 +36,67 @@ export default function Page() {
     <Shell>
       <section
         aria-labelledby="applications-title"
-        className="mx-auto min-h-[calc(100vh-140px)] max-w-2xl px-6 py-10"
+        className="mx-auto min-h-[calc(100vh-160px)] max-w-2xl px-4 py-10 sm:px-6"
       >
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-secondary">
-          {f.citizen ? `Signed in as ${f.citizen.name}` : "Demo applications"}
-        </p>
-        <h1 id="applications-title" className="mt-1 text-2xl font-bold tracking-tight text-primary">
+        <div className="mb-2">
+          <span className="ux4g-tag-tonal-brand ux4g-tag-s">
+            {f.citizen ? `Signed in as ${f.citizen.name}` : "Demo applications"}
+          </span>
+        </div>
+        <h1 id="applications-title" className="text-2xl font-extrabold tracking-tight text-[var(--ux4g-text-neutral-primary,#171717)] sm:text-3xl">
           My Applications
         </h1>
 
         <div aria-live="polite" className="mt-6 space-y-4">
           {state === "loading" && (
-            <p className="card p-5 text-xs text-outline font-medium">
-              Loading your saved demo applications…
-            </p>
+            <div className="ux4g-card ux4g-card-solid ux4g-card-vertical p-5 text-xs text-[var(--ux4g-text-neutral-secondary,#404040)] flex items-center gap-2">
+              <span className="ux4g-spinner-primary-full ux4g-spinner-sm" role="status" aria-label="Loading" />
+              <span>Loading your saved demo applications…</span>
+            </div>
           )}
           {state === "signed-out" && (
-            <p className="card p-5 text-xs text-outline font-medium leading-relaxed">
+            <div className="ux4g-alert ux4g-alert-info p-4 text-xs">
               Sign in with the published demo credentials to view the persisted application.
-            </p>
+            </div>
           )}
           {state === "error" && (
-            <p className="card p-5 text-xs text-outline font-medium leading-relaxed">
+            <div className="ux4g-alert ux4g-alert-error p-4 text-xs">
               Saved demo applications could not be read. Please refresh and try again.
-            </p>
+            </div>
           )}
 
           {apps.map((app) => (
-            <article className="card p-6 space-y-3" key={app.id}>
-              <div>
-                <p className="text-[10px] font-bold text-secondary uppercase tracking-wider">
-                  {app.serviceType}
-                </p>
-                <h2 className="text-base font-bold text-primary mt-0.5">
-                  {app.id}
-                </h2>
+            <article className="ux4g-card ux4g-card-solid ux4g-card-vertical p-6 space-y-3 shadow-sm" key={app.id}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="ux4g-tag-tonal-brand ux4g-tag-s uppercase font-bold text-[10px]">
+                    {app.serviceType}
+                  </span>
+                  <h2 className="text-base font-bold text-[var(--ux4g-text-neutral-primary,#171717)] mt-1">
+                    {app.id}
+                  </h2>
+                </div>
+                <span className="ux4g-tag-filled-success ux4g-tag-s capitalize">
+                  {app.status.replaceAll("-", " ")}
+                </span>
               </div>
               
-              <div className="text-xs text-outline leading-relaxed border-t border-outline-variant/40 pt-3">
-                <p>Status: <span className="font-semibold text-primary capitalize">{app.status.replaceAll("-", " ")}</span></p>
-                <span className="text-[10px] text-outline/65">
+              <div className="text-xs text-[var(--ux4g-text-neutral-secondary,#404040)] leading-relaxed border-t border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] pt-3">
+                <p>Status: <span className="font-semibold text-[var(--ux4g-text-neutral-primary,#171717)] capitalize">{app.status.replaceAll("-", " ")}</span></p>
+                <span className="text-[11px] text-[var(--ux4g-text-neutral-tertiary,#737373)]">
                   Last updated: {new Date(app.updatedAt).toLocaleDateString()}
                 </span>
               </div>
               
-              <p className="text-xs font-semibold text-primary">
+              <p className="text-xs font-semibold text-[var(--ux4g-text-neutral-primary,#171717)]">
                 Next Step: {app.nextAction}
               </p>
               
               <div className="pt-2">
-                <Link href={`/track?id=${encodeURIComponent(app.id)}`} className="btn-primary py-2 px-4.5 text-xs inline-block">
+                <Link
+                  href={`/track?id=${encodeURIComponent(app.id)}`}
+                  className="ux4g-btn ux4g-btn-primary ux4g-btn-sm inline-flex items-center"
+                >
                   Reopen application
                 </Link>
               </div>

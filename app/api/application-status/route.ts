@@ -1,6 +1,8 @@
 import { sessionUserId } from "@/lib/demo-session";
 import { getDb } from "@/lib/mongodb";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: Request) {
   try {
     const userId = await sessionUserId();
