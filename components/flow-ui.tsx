@@ -20,14 +20,17 @@ import { requirementFor, validateAnswer } from "@/data/forms";
 import { useFlow } from "./flow-provider";
 import { TurnstileDemo } from "./turnstile-demo";
 import { getTranslation } from "@/lib/translations";
+import { GovernmentUpdates } from "./government-updates";
+import { DelegateHelpModal } from "./delegate-help-modal";
 
 const data = intents as typeof intents;
 
 export function Step({ number, title, children }: { number: string; title: string; children: React.ReactNode }) {
   return (
     <section aria-labelledby="page-title" className="mx-auto flex min-h-[calc(100vh-160px)] max-w-2xl flex-col justify-center px-4 py-8 sm:px-6">
-      <div className="mb-2">
+      <div className="mb-2 flex items-center justify-between gap-3">
         <span className="ux4g-tag-tonal-brand ux4g-tag-s">{number}</span>
+        <DelegateHelpModal variant="button" />
       </div>
       <h1 id="page-title" className="mb-4 text-2xl font-extrabold tracking-tight text-[var(--ux4g-text-neutral-primary,#171717)] sm:text-3xl leading-snug">
         {title}
@@ -56,76 +59,90 @@ export function Landing() {
     r.push("/understand");
   };
 
+  const isDark = f.theme === "dark";
+
   return (
-    <section aria-labelledby="landing-title" className="mx-auto flex min-h-[calc(100vh-160px)] max-w-4xl flex-col items-center justify-center px-4 py-12 text-center sm:px-6">
-      <span className="ux4g-tag-tonal-brand ux4g-tag-s mb-5 uppercase tracking-widest font-bold">
-        {t.landing.welcomeBadge}
-      </span>
-
-      <h1 id="landing-title" className="max-w-2xl text-3xl font-extrabold tracking-tight text-[var(--ux4g-text-neutral-primary,#171717)] sm:text-4xl md:leading-[1.2]">
-        {t.landing.heroTitle}
-      </h1>
-
-      <p className="mt-3.5 max-w-lg text-sm leading-relaxed text-[var(--ux4g-text-neutral-secondary,#404040)]">
-        {t.landing.heroSubtitle}
-      </p>
-
-      {/* Styled UX4G Intent Search form */}
-      <form
-        aria-label="Describe the service you need"
-        onSubmit={(e) => {
-          e.preventDefault();
-          start(f.prompt);
+    <>
+      <div
+        style={{
+          backgroundImage: `url(${isDark ? "'/images/Background_dark.png'" : "'/images/Background_light.png'"})`,
         }}
-        className="ux4g-card ux4g-card-solid ux4g-card-vertical mt-8 flex w-full max-w-2xl flex-col gap-2.5 p-3 shadow-md sm:flex-row"
+        className="landing-hero-bg relative min-h-[calc(100vh-160px)] w-full flex items-center justify-center transition-all duration-300"
       >
-        <label className="sr-only" htmlFor="service-prompt">
-          Describe what you need
-        </label>
-        <div className="ux4g-input-container ux4g-input-md ux4g-input-default flex-1">
-          <input
-            id="service-prompt"
-            value={f.prompt}
-            onChange={(e) => f.setPrompt(e.target.value)}
-            className="w-full rounded-md border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] px-4 py-2.5 text-sm text-[var(--ux4g-text-neutral-primary,#171717)] focus:outline-none"
-            placeholder={t.landing.promptPlaceholder}
-          />
-        </div>
-        <button
-          type="submit"
-          aria-label="Start service guidance"
-          className="ux4g-btn ux4g-btn-primary ux4g-btn-md flex items-center justify-center gap-1.5 whitespace-nowrap"
-        >
-          <span>{t.landing.startBtn}</span>
-          <ChevronRight size={16} />
-        </button>
-      </form>
+        <section aria-labelledby="landing-title" className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center justify-center px-4 py-12 text-center sm:px-6">
+          <span className="ux4g-tag-tonal-brand ux4g-tag-s mb-5 uppercase tracking-widest font-bold">
+            {t.landing.welcomeBadge}
+          </span>
 
-      {/* Recommended tasks list using UX4G Filter Chips */}
-      <div className="mt-10">
-        <p className="mb-3 text-[11px] font-bold uppercase tracking-wider text-[var(--ux4g-text-neutral-tertiary,#737373)]">
-          {t.landing.commonTasksTitle}
-        </p>
-        <div className="ux4g-filter-chip-group flex flex-wrap justify-center gap-2">
-          {[
-            { label: t.landing.transferOwnership, action: () => { f.setIntent("ownership-transfer"); f.setPrompt(t.landing.transferOwnership); r.push("/understand"); } },
-            { label: t.landing.renewLicense, action: () => { f.setIntent("license-renewal"); f.setPrompt(t.landing.renewLicense); r.push("/understand"); } },
-            { label: `${t.landing.replaceRc} · ${t.landing.comingSoon}`, disabled: true },
-            { label: `${t.landing.payChallan} · ${t.landing.comingSoon}`, disabled: true },
-          ].map((item, idx) => (
+          <h1 id="landing-title" className="max-w-2xl text-3xl font-extrabold tracking-tight text-[var(--ux4g-text-neutral-primary,#171717)] sm:text-4xl md:leading-[1.2]">
+            {t.landing.heroTitle}
+          </h1>
+
+          <p className="mt-3.5 max-w-lg text-sm leading-relaxed text-[var(--ux4g-text-neutral-secondary,#404040)]">
+            {t.landing.heroSubtitle}
+          </p>
+
+          {/* Styled UX4G Intent Search form */}
+          <form
+            aria-label="Describe the service you need"
+            onSubmit={(e) => {
+              e.preventDefault();
+              start(f.prompt);
+            }}
+            className="ux4g-card ux4g-card-solid ux4g-card-vertical mt-8 flex w-full max-w-2xl flex-col gap-2.5 p-3 shadow-md sm:flex-row bg-white/95 dark:bg-[#1E1E1E]/95 backdrop-blur-sm"
+          >
+            <label className="sr-only" htmlFor="service-prompt">
+              Describe what you need
+            </label>
+            <div className="ux4g-input-container ux4g-input-md ux4g-input-default flex-1">
+              <input
+                id="service-prompt"
+                value={f.prompt}
+                onChange={(e) => f.setPrompt(e.target.value)}
+                className="w-full rounded-md border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] px-4 py-2.5 text-sm text-[var(--ux4g-text-neutral-primary,#171717)] focus:outline-none"
+                placeholder={t.landing.promptPlaceholder}
+              />
+            </div>
             <button
-              type="button"
-              key={idx}
-              disabled={item.disabled}
-              onClick={item.action}
-              className={`ux4g-filter-chip-md font-semibold ${item.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+              type="submit"
+              aria-label="Start service guidance"
+              className="ux4g-btn ux4g-btn-primary ux4g-btn-md flex items-center justify-center gap-1.5 whitespace-nowrap"
             >
-              {item.label}
+              <span>{t.landing.startBtn}</span>
+              <ChevronRight size={16} />
             </button>
-          ))}
-        </div>
+          </form>
+
+          {/* Recommended tasks list using UX4G Filter Chips */}
+          <div className="mt-10">
+            <p className="mb-3 text-[11px] font-bold uppercase tracking-wider text-[var(--ux4g-text-neutral-tertiary,#737373)]">
+              {t.landing.commonTasksTitle}
+            </p>
+            <div className="ux4g-filter-chip-group flex flex-wrap justify-center gap-2">
+              {[
+                { label: t.landing.transferOwnership, action: () => { f.setIntent("ownership-transfer"); f.setPrompt(t.landing.transferOwnership); r.push("/understand"); } },
+                { label: t.landing.renewLicense, action: () => { f.setIntent("license-renewal"); f.setPrompt(t.landing.renewLicense); r.push("/understand"); } },
+                { label: `${t.landing.replaceRc} · ${t.landing.comingSoon}`, disabled: true },
+                { label: `${t.landing.payChallan} · ${t.landing.comingSoon}`, disabled: true },
+              ].map((item, idx) => (
+                <button
+                  type="button"
+                  key={idx}
+                  disabled={item.disabled}
+                  onClick={item.action}
+                  className={`ux4g-filter-chip-md font-semibold bg-white/90 dark:bg-[#1E1E1E]/90 ${item.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
       </div>
-    </section>
+
+      {/* Rules, Policies & National Schemes Section */}
+      <GovernmentUpdates />
+    </>
   );
 }
 
@@ -197,7 +214,7 @@ export function Questions() {
       <p className="mb-1 text-sm text-[var(--ux4g-text-neutral-secondary,#404040)]">
         {t.questions.subtitle}
       </p>
-      <p className="mb-6 text-xs font-bold uppercase tracking-wider text-[var(--ux4g-text-brand-primary-default,#4A2BC2)]">
+      <p className="mb-6 text-xs font-bold uppercase tracking-wider text-[var(--ux4g-text-brand-primary-default,#002B7F)]">
         {t.questions.required}: {req}
       </p>
 
@@ -208,7 +225,7 @@ export function Questions() {
               type="button"
               key={o}
               onClick={() => choose(o)}
-              className="ux4g-card ux4g-card-solid ux4g-card-vertical flex min-h-[72px] items-center p-4 text-left font-bold text-sm tracking-tight transition-all hover:border-[var(--ux4g-color-primary-600,#4A2BC2)] hover:shadow-md"
+              className="ux4g-card ux4g-card-solid ux4g-card-vertical flex min-h-[72px] items-center p-4 text-left font-bold text-sm tracking-tight transition-all hover:border-[var(--ux4g-color-primary-600,#002B7F)] hover:shadow-md"
             >
               {o}
             </button>
@@ -224,7 +241,7 @@ export function Questions() {
         >
           <div className="ux4g-input-container ux4g-input-md ux4g-input-default">
             <label className="block text-sm font-semibold text-[var(--ux4g-text-neutral-primary,#171717)] mb-1" htmlFor="answer">
-              Your answer <span className="font-normal text-[var(--ux4g-text-brand-primary-default,#4A2BC2)]">({req})</span>
+              Your answer <span className="font-normal text-[var(--ux4g-text-brand-primary-default,#002B7F)]">({req})</span>
             </label>
             <input
               id="answer"
@@ -275,7 +292,7 @@ export function Plan() {
       <ol className="ux4g-card ux4g-card-solid ux4g-card-vertical mt-6 divide-y divide-[var(--ux4g-border-neutral-subtle,#E5E5E5)]">
         {item.plan.map((x, i) => (
           <li className="flex gap-4 p-5" key={x}>
-            <span aria-hidden="true" className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[var(--ux4g-color-primary-600,#4A2BC2)] text-xs font-bold text-white shadow-sm">
+            <span aria-hidden="true" className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[var(--ux4g-color-primary-600,#002B7F)] text-xs font-bold text-white shadow-sm">
               {i + 1}
             </span>
             <div>
@@ -331,7 +348,7 @@ export function Uploads() {
         {item.documents.map((n) => (
           <div className="ux4g-card ux4g-card-solid ux4g-card-vertical flex flex-wrap items-center justify-between gap-3 p-4" key={n}>
             <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] text-[var(--ux4g-text-brand-primary-default,#4A2BC2)]">
+              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] text-[var(--ux4g-text-brand-primary-default,#002B7F)]">
                 <FileText size={18} />
               </span>
               <div>
@@ -486,7 +503,7 @@ export function Review() {
                 {missingAnswers.map((question) => (
                   <li key={question.id}>
                     {question.label} is needed.{" "}
-                    <Link className="font-bold text-[var(--ux4g-text-brand-primary-default,#4A2BC2)] underline" href="/questions">
+                    <Link className="font-bold text-[var(--ux4g-text-brand-primary-default,#002B7F)] underline" href="/questions">
                       Complete now
                     </Link>
                   </li>
@@ -494,7 +511,7 @@ export function Review() {
                 {missingDocuments.map((document) => (
                   <li key={document}>
                     {document} is required.{" "}
-                    <Link className="font-bold text-[var(--ux4g-text-brand-primary-default,#4A2BC2)] underline" href="/upload">
+                    <Link className="font-bold text-[var(--ux4g-text-brand-primary-default,#002B7F)] underline" href="/upload">
                       Upload now
                     </Link>
                   </li>
@@ -512,6 +529,8 @@ export function Review() {
           {submitError}
         </div>
       )}
+
+      <DelegateHelpModal variant="card" className="mt-5" />
 
       <button
         type="button"
@@ -541,6 +560,7 @@ export function Track() {
   const [currentStep, setCurrentStep] = useState("Submitted information");
   const [nextAction, setNextAction] = useState("Confirm demo payment");
   const [loadError, setLoadError] = useState(false);
+  const [delegatedInfo, setDelegatedInfo] = useState<{ completedViaDelegated?: boolean; delegateName?: string } | null>(null);
   const applicationId = searchParams.get("id") || f.applicationId;
 
   useEffect(() => {
@@ -552,6 +572,12 @@ export function Track() {
         const payload = await response.json();
         setCurrentStep(payload.currentStep);
         setNextAction(payload.nextAction);
+        if (payload.completedViaDelegated) {
+          setDelegatedInfo({
+            completedViaDelegated: true,
+            delegateName: payload.delegateName,
+          });
+        }
         setStatus(payload.status === "approved" ? "approved" : payload.status === "rejected" ? "rejected" : "processing");
       })
       .catch(() => {
@@ -581,6 +607,13 @@ export function Track() {
   return (
     <Step number={`Application ID: ${applicationId}`} title={t.track.title}>
       <div className="ux4g-card ux4g-card-solid ux4g-card-vertical mt-3 p-6 space-y-6" aria-live="polite">
+        {/* Delegated Access Info Alert */}
+        {delegatedInfo?.completedViaDelegated && (
+          <div className="p-3.5 rounded-xl border border-blue-200 dark:border-blue-800 bg-[#EEF4FF] dark:bg-blue-950/80 text-xs text-[#002B7F] dark:text-blue-300 font-bold flex items-center gap-2">
+            <span>🤝 Completed via delegated access by {delegatedInfo.delegateName || "a trusted helper"}</span>
+          </div>
+        )}
+
         {/* Status Callout Banner */}
         <div className={`ux4g-alert ${status === "rejected" ? "ux4g-alert-error" : "ux4g-alert-info"} flex items-start gap-3 p-4`}>
           <Clock3 aria-hidden="true" className="shrink-0 mt-0.5" size={18} />
@@ -610,7 +643,7 @@ export function Track() {
                       isComplete
                         ? "bg-[var(--ux4g-color-green-700,#00522C)] text-white"
                         : isActiveStep
-                        ? "bg-[var(--ux4g-color-primary-600,#4A2BC2)] text-white"
+                        ? "bg-[var(--ux4g-color-primary-600,#002B7F)] text-white"
                         : "border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] text-[var(--ux4g-text-neutral-tertiary,#737373)]"
                     }`}
                   >
@@ -621,7 +654,7 @@ export function Track() {
                   )}
                 </div>
                 <div className="pb-4">
-                  <h2 className={`text-xs font-bold ${isActiveStep ? "text-[var(--ux4g-text-brand-primary-default,#4A2BC2)]" : "text-[var(--ux4g-text-neutral-primary,#171717)]"}`}>
+                  <h2 className={`text-xs font-bold ${isActiveStep ? "text-[var(--ux4g-text-brand-primary-default,#002B7F)]" : "text-[var(--ux4g-text-neutral-primary,#171717)]"}`}>
                     {title}
                   </h2>
                   <p className="text-[11px] text-[var(--ux4g-text-neutral-tertiary,#737373)] mt-0.5">

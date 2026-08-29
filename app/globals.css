@@ -6,10 +6,41 @@
   --font-family: 'Noto Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --ux4g-border-neutral-subtle: var(--ux4g-border-color-neutral-subtle, var(--ux4g-color-neutral-200));
+  --landing-bg-image: url('/images/Background_light.png');
+
+  /* Ashoka Chakra Navy Blue Brand Colors */
+  --ux4g-color-primary-50: #EEF4FF;
+  --ux4g-color-primary-100: #D0E1FD;
+  --ux4g-color-primary-200: #B5D3FB;
+  --ux4g-color-primary-300: #82B1F8;
+  --ux4g-color-primary-400: #3B82F6;
+  --ux4g-color-primary-500: #1D4ED8;
+  --ux4g-color-primary-600: #002B7F;
+  --ux4g-color-primary-700: #002266;
+  --ux4g-color-primary-800: #001A4D;
+  --ux4g-color-primary-900: #001133;
+  --ux4g-color-primary-950: #000B22;
+
+  --ux4g-text-brand-primary-default: #002B7F;
+  --color-primary: #002B7F;
+  --color-primary-container: #EEF4FF;
 }
 
-:root[data-theme="dark"] {
+:root[data-theme="dark"],
+html[data-theme="dark"],
+.dark {
   --ux4g-border-neutral-subtle: var(--ux4g-color-neutral-800);
+  --landing-bg-image: url('/images/Background_dark.png');
+  --ux4g-color-primary-50: #001133;
+  --ux4g-color-primary-100: #001A4D;
+  --ux4g-color-primary-200: #1E3A8A;
+  --ux4g-color-primary-600: #3B82F6;
+  --ux4g-color-primary-700: #2563EB;
+  --ux4g-color-primary-800: #1D4ED8;
+  --ux4g-color-primary-950: #000B22;
+  --ux4g-text-brand-primary-default: #60A5FA;
+  --color-primary: #3B82F6;
+  --color-primary-container: #001A4D;
 }
 
 * {
@@ -39,7 +70,7 @@ input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
 a:focus-visible {
-  outline: 2px solid var(--ux4g-color-primary-600, #4A2BC2);
+  outline: 2px solid var(--ux4g-color-primary-600, #002B7F);
   outline-offset: 2px;
 }
 
@@ -50,3 +81,73 @@ a:focus-visible {
   border-color: var(--ux4g-border-neutral-subtle, #E5E5E5);
   transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
+
+/* UX4G Button and Tag overrides for Ashoka Chakra Navy Blue */
+.ux4g-btn-primary {
+  background-color: var(--ux4g-color-primary-600, #002B7F) !important;
+  border-color: var(--ux4g-color-primary-600, #002B7F) !important;
+  color: #ffffff !important;
+}
+
+.ux4g-btn-primary:hover {
+  background-color: var(--ux4g-color-primary-700, #002266) !important;
+  border-color: var(--ux4g-color-primary-700, #002266) !important;
+}
+
+.ux4g-btn-outline-primary {
+  border-color: var(--ux4g-color-primary-600, #002B7F) !important;
+  color: var(--ux4g-color-primary-600, #002B7F) !important;
+}
+
+.ux4g-btn-outline-primary:hover {
+  background-color: var(--ux4g-color-primary-50, #EEF4FF) !important;
+}
+
+.ux4g-tag-tonal-brand {
+  background-color: var(--ux4g-color-primary-50, #EEF4FF) !important;
+  color: var(--ux4g-color-primary-600, #002B7F) !important;
+}
+
+[data-theme="dark"] .ux4g-tag-tonal-brand,
+.dark .ux4g-tag-tonal-brand {
+  background-color: #001A4D !important;
+  color: #93C5FD !important;
+}
+
+.landing-hero-bg {
+  background-image: var(--landing-bg-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background-image 0.2s ease-in-out;
+}
+
+[data-theme="dark"] .landing-hero-bg,
+.dark .landing-hero-bg,
+html[data-theme="dark"] .landing-hero-bg,
+body[data-theme="dark"] .landing-hero-bg {
+  background-image: url('/images/Background_dark.png') !important;
+}
+
+/* Infinite Marquee Loop for Government Updates */
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 32s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+
+

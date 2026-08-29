@@ -167,7 +167,7 @@ export function Ux4gHeader() {
               aria-label={`Select language. Currently ${currentLangObj.name} (${currentLangObj.nativeName})`}
               title="Change language / भाषा बदलें"
             >
-              <Globe size={13} className="text-primary-300 text-indigo-400" />
+              <Globe size={13} className="text-blue-400" />
               <span className="font-bold">{currentLangObj.nativeName}</span>
               <span className="text-[10px] text-slate-400 hidden sm:inline">({currentLangObj.name})</span>
               <ChevronDown size={11} className="text-slate-400" />
@@ -185,7 +185,7 @@ export function Ux4gHeader() {
             >
               {theme === "light" ? (
                 <>
-                  <Moon size={13} className="text-indigo-400" />
+                  <Moon size={13} className="text-blue-400" />
                   <span className="hidden sm:inline">Dark Mode</span>
                 </>
               ) : (
@@ -231,7 +231,7 @@ export function Ux4gHeader() {
                   strokeLinecap="round"
                   className="text-[var(--ux4g-text-neutral-primary,#171717)]"
                 />
-                <circle cx="35" cy="30" r="6" fill="currentColor" className="text-[var(--ux4g-color-primary-600,#4A2BC2)]" />
+                <circle cx="35" cy="30" r="6" fill="currentColor" className="text-[var(--ux4g-color-primary-600,#002B7F)]" />
               </svg>
             </div>
 
@@ -244,7 +244,7 @@ export function Ux4gHeader() {
             >
               <div
                 aria-hidden="true"
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--ux4g-color-primary-600,#4A2BC2)] text-white shadow-sm font-bold text-xs"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--ux4g-color-primary-600,#002B7F)] text-white shadow-sm font-bold text-xs"
               >
                 <CarFront size={20} />
               </div>
@@ -254,7 +254,7 @@ export function Ux4gHeader() {
                 <span className="text-base font-extrabold tracking-tight text-[var(--ux4g-text-neutral-primary,#171717)] sm:text-lg">
                   {t.nav.portalName}
                 </span>
-                <span className="text-[11px] font-semibold text-[var(--ux4g-text-brand-primary-default,#4A2BC2)]">
+                <span className="text-[11px] font-semibold text-[var(--ux4g-text-brand-primary-default,#002B7F)]">
                   {t.nav.ministryName}
                 </span>
               </div>
@@ -270,13 +270,13 @@ export function Ux4gHeader() {
               href="/"
               className={`relative py-6 transition-colors hover:text-[var(--ux4g-text-neutral-primary,#171717)] ${
                 isHomeActive
-                  ? "font-bold text-[var(--ux4g-text-brand-primary-default,#4A2BC2)]"
+                  ? "font-bold text-[var(--ux4g-text-brand-primary-default,#002B7F)]"
                   : ""
               }`}
             >
               {t.nav.home}
               {isHomeActive && (
-                <span className="absolute bottom-0 inset-x-0 h-0.5 rounded-full bg-[var(--ux4g-color-primary-600,#4A2BC2)]" />
+                <span className="absolute bottom-0 inset-x-0 h-0.5 rounded-full bg-[var(--ux4g-color-primary-600,#002B7F)]" />
               )}
             </Link>
 
@@ -284,38 +284,29 @@ export function Ux4gHeader() {
               href="/track"
               className={`relative py-6 transition-colors hover:text-[var(--ux4g-text-neutral-primary,#171717)] ${
                 isTrackActive
-                  ? "font-bold text-[var(--ux4g-text-brand-primary-default,#4A2BC2)]"
+                  ? "font-bold text-[var(--ux4g-text-brand-primary-default,#002B7F)]"
                   : ""
               }`}
             >
               {t.nav.track}
               {isTrackActive && (
-                <span className="absolute bottom-0 inset-x-0 h-0.5 rounded-full bg-[var(--ux4g-color-primary-600,#4A2BC2)]" />
+                <span className="absolute bottom-0 inset-x-0 h-0.5 rounded-full bg-[var(--ux4g-color-primary-600,#002B7F)]" />
               )}
             </Link>
 
-            {citizen ? (
-              <Link
-                href="/applications"
-                className={`relative py-6 transition-colors hover:text-[var(--ux4g-text-neutral-primary,#171717)] ${
-                  isAppsActive
-                    ? "font-bold text-[var(--ux4g-text-brand-primary-default,#4A2BC2)]"
-                    : ""
-                }`}
-              >
-                {t.nav.applications}
-                {isAppsActive && (
-                  <span className="absolute bottom-0 inset-x-0 h-0.5 rounded-full bg-[var(--ux4g-color-primary-600,#4A2BC2)]" />
-                )}
-              </Link>
-            ) : (
-              <Link
-                href="/sign-in"
-                className="py-6 hover:text-[var(--ux4g-text-neutral-primary,#171717)] transition-colors"
-              >
-                {t.nav.services}
-              </Link>
-            )}
+            <Link
+              href="/applications"
+              className={`relative py-6 transition-colors hover:text-[var(--ux4g-text-neutral-primary,#171717)] ${
+                isAppsActive
+                  ? "font-bold text-[var(--ux4g-text-brand-primary-default,#002B7F)]"
+                  : ""
+              }`}
+            >
+              {t.nav.applications}
+              {isAppsActive && (
+                <span className="absolute bottom-0 inset-x-0 h-0.5 rounded-full bg-[var(--ux4g-color-primary-600,#002B7F)]" />
+              )}
+            </Link>
 
             <a
               href="https://morth.nic.in"
@@ -402,7 +393,7 @@ export function Ux4gHeader() {
               onClick={() => setMobileMenuOpen(false)}
               className={`py-2 transition-colors ${
                 isHomeActive
-                  ? "font-bold text-[var(--ux4g-text-brand-primary-default,#4A2BC2)]"
+                  ? "font-bold text-[var(--ux4g-text-brand-primary-default,#002B7F)]"
                   : "text-[var(--ux4g-text-neutral-secondary,#404040)]"
               }`}
             >
@@ -413,25 +404,23 @@ export function Ux4gHeader() {
               onClick={() => setMobileMenuOpen(false)}
               className={`py-2 transition-colors ${
                 isTrackActive
-                  ? "font-bold text-[var(--ux4g-text-brand-primary-default,#4A2BC2)]"
+                  ? "font-bold text-[var(--ux4g-text-brand-primary-default,#002B7F)]"
                   : "text-[var(--ux4g-text-neutral-secondary,#404040)]"
               }`}
             >
               {t.nav.track}
             </Link>
-            {citizen && (
-              <Link
-                href="/applications"
-                onClick={() => setMobileMenuOpen(false)}
-                className={`py-2 transition-colors ${
-                  isAppsActive
-                    ? "font-bold text-[var(--ux4g-text-brand-primary-default,#4A2BC2)]"
-                    : "text-[var(--ux4g-text-neutral-secondary,#404040)]"
-                }`}
-              >
-                {t.nav.applications}
-              </Link>
-            )}
+            <Link
+              href="/applications"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`py-2 transition-colors ${
+                isAppsActive
+                  ? "font-bold text-[var(--ux4g-text-brand-primary-default,#002B7F)]"
+                  : "text-[var(--ux4g-text-neutral-secondary,#404040)]"
+              }`}
+            >
+              {t.nav.applications}
+            </Link>
             <a
               href="https://morth.nic.in"
               target="_blank"
@@ -449,7 +438,7 @@ export function Ux4gHeader() {
                   setMobileMenuOpen(false);
                   setLangModalOpen(true);
                 }}
-                className="flex items-center gap-1.5 text-xs font-bold text-[var(--ux4g-text-brand-primary-default,#4A2BC2)]"
+                className="flex items-center gap-1.5 text-xs font-bold text-[var(--ux4g-text-brand-primary-default,#002B7F)]"
               >
                 <Globe size={14} />
                 <span>Language: {currentLangObj.nativeName}</span>
@@ -496,7 +485,7 @@ export function Ux4gHeader() {
             {/* Modal Header */}
             <div className="flex items-center justify-between pb-4 border-b border-[var(--ux4g-border-neutral-subtle,#E5E5E5)]">
               <div className="flex items-center gap-2.5">
-                <div className="grid h-9 w-9 place-items-center rounded-lg bg-[var(--ux4g-color-primary-50,#F3F0FF)] text-[var(--ux4g-color-primary-600,#4A2BC2)]">
+                <div className="grid h-9 w-9 place-items-center rounded-lg bg-[var(--ux4g-color-primary-50,#EEF4FF)] text-[var(--ux4g-color-primary-600,#002B7F)]">
                   <Globe size={18} />
                 </div>
                 <div>
@@ -551,7 +540,7 @@ export function Ux4gHeader() {
                     }}
                     className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all ${
                       isSelected
-                        ? "border-[var(--ux4g-color-primary-600,#4A2BC2)] bg-[var(--ux4g-color-primary-50,#F3F0FF)] dark:bg-[var(--ux4g-color-primary-950,#1A0E3D)] text-[var(--ux4g-color-primary-600,#4A2BC2)] ring-1 ring-[var(--ux4g-color-primary-600,#4A2BC2)] font-bold"
+                        ? "border-[var(--ux4g-color-primary-600,#002B7F)] bg-[var(--ux4g-color-primary-50,#EEF4FF)] dark:bg-[var(--ux4g-color-primary-950,#000B22)] text-[var(--ux4g-color-primary-600,#002B7F)] ring-1 ring-[var(--ux4g-color-primary-600,#002B7F)] font-bold"
                         : "border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] bg-[var(--ux4g-bg-neutral-elevated,#FFFFFF)] hover:bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)]"
                     }`}
                   >
@@ -565,7 +554,7 @@ export function Ux4gHeader() {
                       </span>
                     </div>
                     {isSelected && (
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--ux4g-color-primary-600,#4A2BC2)] text-white shadow-sm shrink-0">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--ux4g-color-primary-600,#002B7F)] text-white shadow-sm shrink-0">
                         <Check size={14} />
                       </span>
                     )}

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Shell } from "@/components/shell";
 import { useFlow } from "@/components/flow-provider";
+import { Users, ShieldCheck, ChevronRight } from "lucide-react";
 
 type Application = {
   id: string;
@@ -11,6 +12,9 @@ type Application = {
   status: string;
   updatedAt: string;
   nextAction: string;
+  completedViaDelegated?: boolean;
+  delegateName?: string;
+  delegatedAt?: string;
 };
 
 export default function Page() {
@@ -51,7 +55,7 @@ export default function Page() {
           {state === "loading" && (
             <div className="ux4g-card ux4g-card-solid ux4g-card-vertical p-5 text-xs text-[var(--ux4g-text-neutral-secondary,#404040)] flex items-center gap-2">
               <span className="ux4g-spinner-primary-full ux4g-spinner-sm" role="status" aria-label="Loading" />
-              <span>Loading your saved demo applications…</span>
+              <span>Loading your saved applications…</span>
             </div>
           )}
           {state === "signed-out" && (
@@ -61,7 +65,7 @@ export default function Page() {
           )}
           {state === "error" && (
             <div className="ux4g-alert ux4g-alert-error p-4 text-xs">
-              Saved demo applications could not be read. Please refresh and try again.
+              Saved applications could not be read. Please refresh and try again.
             </div>
           )}
 
@@ -91,13 +95,23 @@ export default function Page() {
               <p className="text-xs font-semibold text-[var(--ux4g-text-neutral-primary,#171717)]">
                 Next Step: {app.nextAction}
               </p>
+
+              {/* Delegated Access Owner Badge */}
+              {app.completedViaDelegated && (
+                <div className="pt-1">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-[#EEF4FF] text-[#002B7F] dark:bg-blue-950/80 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                    <Users size={12} /> Completed via delegated access by {app.delegateName || "a trusted helper"}
+                  </span>
+                </div>
+              )}
               
-              <div className="pt-2">
+              <div className="pt-2 flex items-center justify-between">
                 <Link
                   href={`/track?id=${encodeURIComponent(app.id)}`}
-                  className="ux4g-btn ux4g-btn-primary ux4g-btn-sm inline-flex items-center"
+                  className="ux4g-btn ux4g-btn-primary ux4g-btn-sm inline-flex items-center gap-1"
                 >
-                  Reopen application
+                  <span>Reopen application</span>
+                  <ChevronRight size={14} />
                 </Link>
               </div>
             </article>

@@ -21,6 +21,9 @@ export async function GET(request: Request) {
       currentStep: application.currentStep || "Prototype consistency check",
       nextAction: application.nextAction || "No action needed",
       retryable: false,
+      completedViaDelegated: application.completedViaDelegated || false,
+      delegateName: application.delegateName || null,
+      delegatedAt: application.delegatedAt || null,
       history: application.statusHistory || []
     });
   } catch (error) {

@@ -60,15 +60,14 @@ export function FlowProvider({ children }: { children: React.ReactNode }) {
       if (stored) {
         const saved = JSON.parse(stored);
         if (saved.citizen) setCitizen(saved.citizen);
-        if (saved.theme === "light" || saved.theme === "dark") {
-          setThemeState(saved.theme);
-          document.documentElement.dataset.theme = saved.theme;
-        } else {
-          const sysDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-          const initialTheme = sysDark ? "dark" : "light";
-          setThemeState(initialTheme);
-          document.documentElement.dataset.theme = initialTheme;
-        }
+        const resolvedTheme = saved.theme === "light" || saved.theme === "dark"
+          ? saved.theme
+          : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        setThemeState(resolvedTheme);
+        document.documentElement.dataset.theme = resolvedTheme;
+        if (resolvedTheme === "dark") document.documentElement.classList.add("dark");
+        else document.documentElement.classList.remove("dark");
+
         if (saved.language) {
           setLanguageState(saved.language);
           document.documentElement.lang = saved.language;
@@ -79,6 +78,8 @@ export function FlowProvider({ children }: { children: React.ReactNode }) {
         const initialTheme = sysDark ? "dark" : "light";
         setThemeState(initialTheme);
         document.documentElement.dataset.theme = initialTheme;
+        if (initialTheme === "dark") document.documentElement.classList.add("dark");
+        else document.documentElement.classList.remove("dark");
       }
     } catch {
       // Fallback in case of localStorage restriction
@@ -106,6 +107,8 @@ export function FlowProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!ready) return;
     document.documentElement.dataset.theme = theme;
+    if (theme === "dark") document.documentElement.classList.add("dark");
+    else document.documentElement.classList.remove("dark");
     document.documentElement.lang = language;
     try {
       localStorage.setItem(
@@ -122,11 +125,15 @@ export function FlowProvider({ children }: { children: React.ReactNode }) {
   const setTheme = (value: "light" | "dark") => {
     setThemeState(value);
     document.documentElement.dataset.theme = value;
+    if (value === "dark") document.documentElement.classList.add("dark");
+    else document.documentElement.classList.remove("dark");
   };
   const toggleTheme = () => {
     setThemeState((prev) => {
       const next = prev === "light" ? "dark" : "light";
       document.documentElement.dataset.theme = next;
+      if (next === "dark") document.documentElement.classList.add("dark");
+      else document.documentElement.classList.remove("dark");
       return next;
     });
   };

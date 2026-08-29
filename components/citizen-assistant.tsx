@@ -44,7 +44,7 @@ function FormattedMessage({ text }: { text: string }) {
           const itemText = line.replace(/^[\*\-•]\s*/, "");
           return (
             <div key={idx} className="flex items-start gap-2 pl-1 my-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-[var(--ux4g-color-primary-600,#4A2BC2)] shrink-0 mt-1.5" />
+              <span className="h-1.5 w-1.5 rounded-full bg-[var(--ux4g-color-primary-600,#002B7F)] shrink-0 mt-1.5" />
               <div className="flex-1 text-[var(--ux4g-text-neutral-primary,#171717)] dark:text-neutral-100">
                 {renderInlineMarkdown(itemText)}
               </div>
@@ -196,7 +196,7 @@ export function CitizenAssistant() {
           className="fixed bottom-6 right-6 z-40 flex flex-col w-[min(92vw,380px)] h-[540px] max-h-[85vh] rounded-2xl bg-white dark:bg-neutral-900 border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] dark:border-neutral-800 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150"
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-[var(--ux4g-color-primary-600,#4A2BC2)] to-[var(--ux4g-color-primary-800,#2C157E)] text-white shadow-sm">
+          <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-[var(--ux4g-color-primary-600,#002B7F)] to-[var(--ux4g-color-primary-800,#001A4D)] text-white shadow-sm">
             <div className="flex items-center gap-2.5">
               <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm text-white shadow-inner">
                 <Bot size={18} />
@@ -248,7 +248,7 @@ export function CitizenAssistant() {
                   setOpen(false);
                   router.push("/track");
                 }}
-                className="font-semibold text-[var(--ux4g-color-primary-600,#4A2BC2)] hover:underline inline-flex items-center gap-0.5"
+                className="font-semibold text-[var(--ux4g-color-primary-600,#002B7F)] hover:underline inline-flex items-center gap-0.5"
               >
                 Track Log <ArrowUpRight size={10} />
               </button>
@@ -269,7 +269,7 @@ export function CitizenAssistant() {
                   className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs shadow-sm mt-0.5 ${
                     msg.sender === "user"
                       ? "bg-neutral-800 text-white dark:bg-neutral-700"
-                      : "bg-[var(--ux4g-color-primary-600,#4A2BC2)] text-white"
+                      : "bg-[var(--ux4g-color-primary-600,#002B7F)] text-white"
                   }`}
                 >
                   {msg.sender === "user" ? <User size={13} /> : <Bot size={13} />}
@@ -279,7 +279,7 @@ export function CitizenAssistant() {
                 <div
                   className={`max-w-[82%] rounded-2xl px-3.5 py-2.5 shadow-sm text-xs ${
                     msg.sender === "user"
-                      ? "rounded-tr-none bg-[var(--ux4g-color-primary-600,#4A2BC2)] text-white font-medium"
+                      ? "rounded-tr-none bg-[var(--ux4g-color-primary-600,#002B7F)] text-white font-medium"
                       : "rounded-tl-none bg-white dark:bg-neutral-800 border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] dark:border-neutral-700/80 text-[var(--ux4g-text-neutral-primary,#171717)] dark:text-neutral-100"
                   }`}
                 >
@@ -302,14 +302,14 @@ export function CitizenAssistant() {
             {/* Loading / Thinking Indicator */}
             {loading && (
               <div className="flex items-start gap-2.5">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--ux4g-color-primary-600,#4A2BC2)] text-white text-xs shadow-sm mt-0.5">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--ux4g-color-primary-600,#002B7F)] text-white text-xs shadow-sm mt-0.5">
                   <Bot size={13} />
                 </span>
                 <div className="rounded-2xl rounded-tl-none bg-white dark:bg-neutral-800 border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] dark:border-neutral-700/80 px-3.5 py-3 shadow-sm flex items-center gap-2 text-xs text-[var(--ux4g-text-neutral-secondary,#525252)]">
                   <span className="flex gap-1 items-center">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--ux4g-color-primary-600,#4A2BC2)] animate-bounce [animation-delay:-0.3s]"></span>
-                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--ux4g-color-primary-600,#4A2BC2)] animate-bounce [animation-delay:-0.15s]"></span>
-                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--ux4g-color-primary-600,#4A2BC2)] animate-bounce"></span>
+                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--ux4g-color-primary-600,#002B7F)] animate-bounce [animation-delay:-0.3s]"></span>
+                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--ux4g-color-primary-600,#002B7F)] animate-bounce [animation-delay:-0.15s]"></span>
+                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--ux4g-color-primary-600,#002B7F)] animate-bounce"></span>
                   </span>
                   <span className="text-[11px] font-medium text-[var(--ux4g-text-neutral-tertiary,#737373)]">
                     Analyzing database…
@@ -329,7 +329,7 @@ export function CitizenAssistant() {
                 type="button"
                 disabled={loading}
                 onClick={() => handleSendMessage(chip.query)}
-                className="shrink-0 text-[10px] font-medium px-2.5 py-1 rounded-full bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] dark:bg-neutral-800 border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] dark:border-neutral-700 text-[var(--ux4g-text-neutral-secondary,#404040)] dark:text-neutral-300 hover:bg-[var(--ux4g-color-primary-50,#F3F0FF)] dark:hover:bg-purple-950/40 hover:text-[var(--ux4g-color-primary-600,#4A2BC2)] hover:border-[var(--ux4g-color-primary-200,#DDD6FE)] transition-all"
+                className="shrink-0 text-[10px] font-medium px-2.5 py-1 rounded-full bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] dark:bg-neutral-800 border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] dark:border-neutral-700 text-[var(--ux4g-text-neutral-secondary,#404040)] dark:text-neutral-300 hover:bg-[var(--ux4g-color-primary-50,#EEF4FF)] dark:hover:bg-blue-950/40 hover:text-[var(--ux4g-color-primary-600,#002B7F)] hover:border-[var(--ux4g-color-primary-200,#B5D3FB)] transition-all"
               >
                 {chip.label}
               </button>
@@ -351,7 +351,7 @@ export function CitizenAssistant() {
                 value={inputVal}
                 onChange={(e) => setInputVal(e.target.value)}
                 disabled={loading}
-                className="w-full rounded-xl border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] dark:border-neutral-700 bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] dark:bg-neutral-800 px-3.5 py-2.5 text-xs text-[var(--ux4g-text-neutral-primary,#171717)] dark:text-white placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-[var(--ux4g-color-primary-500,#6366F1)] transition-all"
+                className="w-full rounded-xl border border-[var(--ux4g-border-neutral-subtle,#E5E5E5)] dark:border-neutral-700 bg-[var(--ux4g-bg-neutral-soft,#F5F5F5)] dark:bg-neutral-800 px-3.5 py-2.5 text-xs text-[var(--ux4g-text-neutral-primary,#171717)] dark:text-white placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-[var(--ux4g-color-primary-500,#1D4ED8)] transition-all"
                 placeholder="Ask about status, payment, documents..."
               />
             </div>
@@ -359,7 +359,7 @@ export function CitizenAssistant() {
               type="submit"
               disabled={loading || !inputVal.trim()}
               aria-label="Send query"
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--ux4g-color-primary-600,#4A2BC2)] text-white hover:bg-[var(--ux4g-color-primary-700,#3B229C)] disabled:opacity-40 disabled:cursor-not-allowed shadow-md transition-all active:scale-95"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--ux4g-color-primary-600,#002B7F)] text-white hover:bg-[var(--ux4g-color-primary-700,#002266)] disabled:opacity-40 disabled:cursor-not-allowed shadow-md transition-all active:scale-95"
             >
               <Send size={14} />
             </button>

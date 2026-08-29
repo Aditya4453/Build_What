@@ -44,7 +44,7 @@ export function TurnstileDemo({ onVerified }: { onVerified: (value: boolean) => 
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-xs font-bold text-[var(--ux4g-text-neutral-primary,#171717)]">
-            Human Verification <span className="font-medium text-[var(--ux4g-text-brand-primary-default,#4A2BC2)]">(Citizen Security Check)</span>
+            Human Verification <span className="font-medium text-[var(--ux4g-text-brand-primary-default,#002B7F)]">(Citizen Security Check)</span>
           </p>
           <p aria-live="polite" className="mt-0.5 text-xs text-[var(--ux4g-text-neutral-secondary,#404040)]">
             {state === "unverified"
