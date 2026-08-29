@@ -4,11 +4,10 @@ export const dynamic = "force-dynamic";
 
 export async function GET(
   _request: Request,
-  context: { params: Promise<{ token: string }> | { token: string } }
+  context: { params: Promise<{ token: string }> }
 ) {
   try {
-    const resolvedParams = await context.params;
-    const token = resolvedParams.token;
+    const { token } = await context.params;
     const result = await validateDelegationToken(token);
 
     if (!result.valid || !result.data) {
