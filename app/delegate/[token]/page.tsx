@@ -492,20 +492,20 @@ export default function DelegatePage() {
 
         {/* STEP 4: Success Screen */}
         {activeStep === "success" && (
-          <div className="ux4g-card ux4g-card-solid p-8 rounded-2xl border border-emerald-200 dark:border-emerald-900 bg-[var(--ux4g-bg-neutral-elevated,#FFFFFF)] dark:bg-neutral-900 shadow-lg text-center space-y-5 animate-in zoom-in-95 duration-200">
-            <div className="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400">
+          <div className="ux4g-card ux4g-card-solid p-8 rounded-2xl border border-blue-200 dark:border-blue-900 bg-[var(--ux4g-bg-neutral-elevated,#FFFFFF)] dark:bg-neutral-900 shadow-lg text-center space-y-5 animate-in zoom-in-95 duration-200">
+            <div className="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-[#EEF4FF] dark:bg-blue-950/80 text-[#002B7F] dark:text-blue-400">
               <CheckCircle2 size={36} />
             </div>
 
             <div>
-              <span className="ux4g-tag-filled-success ux4g-tag-s text-[10px] uppercase font-bold tracking-wider">
-                Submission Complete
+              <span className="ux4g-tag-tonal-brand ux4g-tag-s text-[10px] uppercase font-bold tracking-wider">
+                Submitted for Owner Approval
               </span>
               <h2 className="text-2xl font-extrabold text-[var(--ux4g-text-neutral-primary,#171717)] dark:text-white mt-2">
-                Application Submitted Successfully!
+                Submitted for Approval!
               </h2>
               <p className="text-xs sm:text-sm text-[var(--ux4g-text-neutral-secondary,#404040)] dark:text-neutral-300 mt-1 max-w-md mx-auto">
-                You have successfully completed and submitted the application for <strong>{ownerName}</strong>.
+                Submitted for approval. <strong>{ownerName}</strong> needs to review and confirm before this is officially sent to Parivahan.
               </p>
             </div>
 
@@ -515,7 +515,7 @@ export default function DelegatePage() {
                 <span className="font-mono font-bold text-[#002B7F] dark:text-blue-300">{delegateData.applicationId}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-neutral-500 dark:text-neutral-400 font-medium">Applicant Name:</span>
+                <span className="text-neutral-500 dark:text-neutral-400 font-medium">Applicant (Owner):</span>
                 <span className="font-bold text-neutral-800 dark:text-neutral-200">{ownerName}</span>
               </div>
               <div className="flex justify-between">
@@ -523,13 +523,17 @@ export default function DelegatePage() {
                 <span className="font-bold text-neutral-800 dark:text-neutral-200">{helperLabel} (Proxy Helper)</span>
               </div>
               <div className="flex justify-between">
+                <span className="text-neutral-500 dark:text-neutral-400 font-medium">Current Status:</span>
+                <span className="font-bold text-amber-600 dark:text-amber-400">Waiting for owner confirmation</span>
+              </div>
+              <div className="flex justify-between">
                 <span className="text-neutral-500 dark:text-neutral-400 font-medium">Link Status:</span>
-                <span className="font-bold text-red-600 dark:text-red-400">Single-use token expired & locked</span>
+                <span className="font-bold text-neutral-500 dark:text-neutral-400">Single-use token locked</span>
               </div>
             </div>
 
             <p className="text-[11px] text-[var(--ux4g-text-neutral-tertiary,#737373)] dark:text-neutral-400 max-w-md mx-auto">
-              {ownerName} will be able to see this completed application directly in their <em>"My Applications"</em> dashboard.
+              {ownerName} can now log into their account to review your inputs, make adjustments if needed, and confirm the official submission.
             </p>
 
             <div className="pt-2 flex justify-center">

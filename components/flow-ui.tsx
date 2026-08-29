@@ -548,7 +548,7 @@ export function Review() {
   );
 }
 
-type ApplicationStatus = "queued" | "processing" | "approved" | "rejected";
+type ApplicationStatus = "queued" | "processing" | "approved" | "rejected" | "pending_owner_approval";
 
 export function Track() {
   const r = useRouter();
@@ -578,7 +578,11 @@ export function Track() {
             delegateName: payload.delegateName,
           });
         }
-        setStatus(payload.status === "approved" ? "approved" : payload.status === "rejected" ? "rejected" : "processing");
+        if (payload.status === "pending_owner_approval") {
+          setStatus("pending_owner_approval");
+        } else {
+          setStatus(payload.status === "approved" ? "approved" : payload.status === "rejected" ? "rejected" : "processing");
+        }
       })
       .catch(() => {
         setLoadError(true);
@@ -589,6 +593,7 @@ export function Track() {
   const retry = () => setAttempt((a) => a + 1);
 
   const descriptions = {
+    pending_owner_approval: "Awaiting citizen owner confirmation. Your helper has submitted details on your behalf.",
     queued: "Your application is safely queued. Next: payment and document checks.",
     processing: "Your submitted information is being reviewed in this prototype.",
     approved: t.track.statusApproved,

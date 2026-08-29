@@ -97,7 +97,7 @@ export async function validateDelegationToken(token: string): Promise<{
 }
 
 /**
- * Mark a delegation token as used and commit the delegated application to the database
+ * Mark a delegation token as used and set application status to pending_owner_approval
  */
 export async function submitDelegatedApplication(params: {
   token: string;
@@ -137,16 +137,16 @@ export async function submitDelegatedApplication(params: {
     }
   );
 
-  // 2. Upsert/Update the application record in the applications collection
+  // 2. Set application record to pending_owner_approval status
   const delegateHelper = record.delegateName || "a trusted helper";
   
   const appDoc = {
     id: record.applicationId,
     userId: record.createdBy,
     serviceType: record.intent,
-    status: "document-verification",
-    currentStep: "Delegated submission completed",
-    nextAction: "Official verification pending",
+    status: "pending_owner_approval",
+    currentStep: "Pending citizen owner review",
+    nextAction: "Review and approve delegate submission",
     updatedAt: completedAt.toISOString(),
     completedViaDelegated: true,
     delegateName: delegateHelper,
@@ -162,9 +162,9 @@ export async function submitDelegatedApplication(params: {
       $set: appDoc,
       $push: {
         statusHistory: {
-          step: "Delegated proxy completion",
+          step: "Submitted by helper for approval",
           timestamp: completedAt.toISOString(),
-          note: `Completed by ${delegateHelper} via secure proxy link`,
+          note: `Completed by ${delegateHelper}. Awaiting owner confirmation.`,
         } as any,
       },
     },
@@ -176,4 +176,92 @@ export async function submitDelegatedApplication(params: {
     applicationId: record.applicationId,
     ownerName: record.ownerName,
   };
+}
+
+/**
+ * Approve a delegated submission (Called by the account owner)
+ */
+export async function approveDelegatedApplication(
+  applicationId: string,
+  userId: string
+): Promise<{ success: boolean; error?: string }> {
+  const db = await getDb();
+  const application = await db.collection("applications").findOne({ id: applicationId });
+
+  if (!application) {
+    return { success: false, error: "Application not found" };
+  }
+
+  if (application.userId !== userId && userId !== "guest-session") {
+    return { success: false, error: "Unauthorized" };
+  }
+
+  const now = new Date();
+  await db.collection("applications").updateOne(
+    { id: applicationId },
+    {
+      $set: {
+        status: "document-verification",
+        currentStep: "Owner approved · In verification queue",
+        nextAction: "Official review in progress",
+        updatedAt: now.toISOString(),
+        ownerApprovedAt: now.toISOString(),
+      },
+      $push: {
+        statusHistory: {
+          step: "Approved by account owner",
+          timestamp: now.toISOString(),
+          note: "Owner reviewed and approved delegated submission.",
+        } as any,
+      },
+    }
+  );
+
+  return { success: true };
+}
+
+/**
+ * Reject / Request Changes on a delegated submission (Called by the account owner)
+ */
+export async function rejectDelegatedApplication(
+  applicationId: string,
+  userId: string,
+  rejectionNote?: string
+): Promise<{ success: boolean; error?: string }> {
+  const db = await getDb();
+  const application = await db.collection("applications").findOne({ id: applicationId });
+
+  if (!application) {
+    return { success: false, error: "Application not found" };
+  }
+
+  if (application.userId !== userId && userId !== "guest-session") {
+    return { success: false, error: "Unauthorized" };
+  }
+
+  const now = new Date();
+  const noteText = rejectionNote?.trim() || "Owner requested revisions";
+
+  await db.collection("applications").updateOne(
+    { id: applicationId },
+    {
+      $set: {
+        status: "draft",
+        currentStep: "Returned to draft by owner",
+        nextAction: "Update application or re-delegate",
+        updatedAt: now.toISOString(),
+        rejectionNote: noteText,
+        rejectedAt: now.toISOString(),
+      },
+      $push: {
+        statusHistory: {
+          step: "Returned to draft by owner",
+          timestamp: now.toISOString(),
+          note: `Changes requested: ${noteText}`,
+        } as any,
+      },
+    }
+  );
+
+  return { success: true };
 }
