@@ -1,103 +1,921 @@
-🇮🇳 Parivahan Path
+# 🇮🇳 Parivahan Path
 
-An AI-powered, citizen-first reimagining of India's vehicle & licence services — built with Codex for [Build What Moves India].
+### An AI-powered, citizen-first reimagining of India's vehicle & driving licence services.
 
-Parivahan Path replaces fragmented, jargon-heavy government portals with a single, intent-driven journey. A citizen describes what they need in plain language — in any of 13 Indian languages — and the system guides them through exactly what applies to their situation, nothing more.
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Parivahan%20Path-6C4DF6?style=for-the-badge)](https://buildwhat-seven.vercel.app/)
+[![Built with Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Database-47A248?style=flat-square&logo=mongodb)](https://www.mongodb.com/)
 
-Built with Codex as a core part of both the development process and the product itself — powering the intent-recognition engine, the pre-submission review logic, and the grounded AI assistant described below.
+> **Built for Build What Moves India**
+>
+> Parivahan Path reimagines India's fragmented transport-service experience into a single, accessible, intent-driven citizen journey.
 
-⚠️ Hackathon prototype — not an official government product. Uses synthetic/mock data only. Not affiliated with or endorsed by MoRTH or the Government of India.
+---
 
-🚀 Live Demo
+## 🚀 Live Demo
 
-buildwhat-seven.vercel.app
+**[→ Open Parivahan Path](https://buildwhat-seven.vercel.app/)**
 
-🎯 The Problem
+> ⚠️ **Hackathon Prototype:** Parivahan Path is a prototype created for the **Build What Moves India** hackathon. It is **not an official Government of India or MoRTH product**, and is not affiliated with or endorsed by the Government of India.
 
-Every year, millions of Indians use Parivahan to renew a licence, transfer a vehicle, or check an application status. Along the way, they hit the same frustrations:
+---
 
-Fragmented portals — Vahan, Sarathi, and state RTO systems require separate navigation and internal jargon (Form 29, HP Termination, NOC) citizens shouldn't need to know
-Unclear requirements — documents and eligibility rules surface only after a citizen commits to a flow
-Errors found only after submission — mismatches and missing information cost a full rejection cycle
-Payments stuck with no explanation — a documented, recurring complaint: payment succeeds, status stays "Pending" indefinitely
-No safe way to get help — elderly or less digitally-confident citizens resort to sharing OTPs and passwords with family or agents
-Deadlines missed silently — PUC, insurance, and licence renewals are entirely the citizen's responsibility to track
-Policies nobody finds — real schemes and benefits exist but stay buried in circulars and gazette notifications
+# 🎯 The Vision
 
-The gap isn't a lack of digital services — it's that the digital experience still makes citizens figure everything out themselves.
+Accessing a government transport service should not require a citizen to understand how the government is organized.
 
-✨ Core Features
-🗣️ Intent-First Natural Language Search
+Today, completing a seemingly simple task can mean navigating different systems, understanding unfamiliar terminology, finding the correct form, selecting the correct jurisdiction, uploading the right documents, and figuring out what to do when something goes wrong.
 
-Citizens type what they need in plain words, in any of 13 Indian languages. The system resolves it directly to the correct statutory workflow — no jargon, no menu-diving.
+**Parivahan Path changes the starting point.**
 
-📋 Real Government Forms, Simplified
+Instead of asking citizens:
 
-Built on authentic form structures — Form 29 & 30 (Ownership Transfer), Form 1, 1-A & 2 (DL Renewal) — with automatic branch logic:
+> *"Which government system or form do you need?"*
 
-Age 40+ triggers the Form 1-A medical certificate requirement
-Financed vehicles trigger financier NOC (Form 35) and dual-form filing
-Inter-state transfers trigger NOC + re-registration sub-paths
-✅ Pre-Submission Review
+we ask:
 
-Catches missing answers and document mismatches before submission — not after, when it's too late to fix cheaply.
+> **"What do you need to do?"**
 
-🤝 Delegated / Proxy Access
+A citizen describes their need in plain language, and Parivahan Path guides them through the relevant statutory workflow — step by step.
 
-Citizens generate a secure, single-use, time-boxed link scoped to exactly one task. A trusted helper can fill it in, but nothing is submitted without the owner's explicit review and approval — replacing the insecure practice of sharing OTPs and passwords.
+---
 
-🔔 Proactive Expiry Reminders
+# 🧩 The Problem
 
-Once a vehicle is linked, the system tracks PUC, insurance, and RC expiry automatically — surfacing urgent renewals (≤7 days) prominently, instead of waiting for the citizen to check.
+Millions of citizens use transport services for tasks such as:
 
-📰 Policy & Scheme Visibility
+- Renewing a Driving Licence
+- Transferring vehicle ownership
+- Checking application status
+- Managing vehicle documents
+- Understanding eligibility and requirements
+- Keeping track of renewals and expiries
 
-A dedicated Announcements section surfaces real, current schemes (EV subsidies, road tax rebates, BH-series registration) so citizens know what applies to them.
+But the current digital experience can create unnecessary friction.
 
-🤖 Grounded AI Assistant — Powered by Codex
+### Key citizen pain points
 
-A scoped conversational assistant, built on Codex, that answers using the citizen's actual application state — eligibility, document requirements, policy questions — not a generic FAQ bot.
+| Problem | What the citizen experiences |
+|---|---|
+| **Fragmented portals** | Vahan, Sarathi and state-level systems require citizens to understand where a service belongs |
+| **Government jargon** | Citizens encounter terms such as Form 29, Form 30, NOC, hypothecation, etc. before understanding what applies to them |
+| **Poor service discovery** | Users have to navigate menus and remember internal service names instead of simply describing their need |
+| **Jurisdiction friction** | State/RTO selection can appear before the system understands the citizen's actual intent |
+| **Unclear requirements** | Eligibility and document requirements can become apparent only after entering a workflow |
+| **Late error detection** | Missing information or document mismatches can result in avoidable rejection cycles |
+| **Status opacity** | A citizen may see a generic "Pending" status without understanding what happened or what they should do next |
+| **No formal delegation** | Elderly or less digitally-confident users often depend on family members or agents for assistance |
+| **Missed renewals** | Citizens are expected to remember PUC, insurance, RC and licence expiry dates themselves |
+| **Hidden policies** | Schemes, benefits and transport policies can remain buried in lengthy government notifications and circulars |
 
-📍 Transparent Status Tracking
+### The fundamental gap
 
-Every application answers four questions, always: What happened? Why? What's next? Do I need to act? No more silent "Pending."
+> **The problem is not the lack of digital services.  
+> The problem is making citizens figure everything out themselves.**
 
-🏗️ Tech Stack
-Layer	Technology
-AI / Intelligence	Codex — powers intent recognition, document review logic, and the grounded assistant
-Framework	Next.js 15 (App Router)
-Language	TypeScript (strict, 0 compiler errors)
-Styling	Tailwind CSS
-Design System	UX4G Design System, WCAG AAA-oriented
-Validation	Zod
-Database	MongoDB with in-memory fallback
-i18n	Custom engine — 13 official Indian languages
-Deployment	Vercel
+---
 
-📁 Project Structure
+# ✨ What is Parivahan Path?
+
+Parivahan Path is an **AI-powered citizen experience layer** designed around the way people actually think and communicate.
+
+Instead of forcing citizens to understand the structure of government services, the platform adapts the journey around the citizen's intent.
+
+### The experience
+
+**Citizen Intent → Intelligent Routing → Guided Workflow → Validation → Review → Submission → Transparent Tracking**
+
+---
+
+# 🌟 Core Features
+
+## 1. 🗣️ Intent-First Natural Language Search
+
+Citizens don't need to know whether their task belongs to Vahan, Sarathi, or a specific form.
+
+They simply describe what they need.
+
+For example:
+
+> **"I want to renew my driving licence."**
+
+or
+
+> **"I bought a second-hand car and want to transfer it to my name."**
+
+Parivahan Path identifies the relevant intent and routes the citizen into the appropriate workflow.
+
+### Key capabilities
+
+- Natural-language service discovery
+- Intent recognition
+- Plain-language guidance
+- Support for **13 Indian languages**
+- Reduced dependency on government terminology
+- Guided follow-up questions instead of overwhelming forms
+
+---
+
+# 2. 📋 Real Government Forms — Simplified
+
+Parivahan Path does **not** remove the underlying statutory requirements.
+
+Instead, it makes them understandable.
+
+The prototype models authentic government form structures including:
+
+### Vehicle Ownership Transfer
+
+- **Form 29**
+- **Form 30**
+- **Form 35** for relevant hypothecation/financier cases
+
+### Driving Licence Renewal
+
+- **Form 2**
+- **Form 1**
+- **Form 1-A** medical certificate where applicable
+
+The system dynamically determines which branches apply to the citizen.
+
+### Example
+
+A citizen renewing a Driving Licence:
+
+```text
+Age < 40
+     ↓
+Standard renewal requirements
+
+Age ≥ 40
+     ↓
+Form 1-A Medical Certificate
+     ↓
+Continue renewal workflow
+````
+
+Similarly:
+
+```text
+Vehicle financed?
+     ↓
+Yes → Financier / Hypothecation requirements
+     ↓
+Relevant NOC / Form 35 workflow
+```
+
+And:
+
+```text
+Inter-state transfer?
+     ↓
+Yes → NOC + re-registration pathway
+```
+
+The citizen does not need to understand the form numbers beforehand.
+
+---
+
+# 3. ✅ Pre-Submission Review
+
+One of the biggest sources of frustration is discovering a problem **after** submission.
+
+Parivahan Path introduces a review layer before submission.
+
+The system checks for:
+
+* Missing required information
+* Invalid inputs
+* Document requirements
+* Document readability
+* Signature presence where applicable
+* Potential information mismatches
+* Relevant workflow conditions
+
+### Instead of:
+
+```text
+Submit
+  ↓
+Error / Rejection
+  ↓
+Start Again
+```
+
+Parivahan Path aims for:
+
+```text
+Fill Details
+  ↓
+Review & Validate
+  ↓
+Fix Issues
+  ↓
+Submit
+```
+
+This shifts error detection from **post-submission** to **pre-submission**.
+
+---
+
+# 4. 🤝 Delegated / Proxy Access
+
+### Built for citizens who need help.
+
+An elderly citizen or a less digitally-confident user may need assistance from:
+
+* A son or daughter
+* A spouse
+* A trusted family member
+* Another authorized helper
+
+But assistance should not require handing over:
+
+* Passwords
+* OTPs
+* Account credentials
+
+### Parivahan Path introduces formal delegated access.
+
+The citizen can generate a:
+
+* **Single-use**
+* **Task-specific**
+* **Time-limited**
+
+secure helper link.
+
+The helper can complete the required information, but **cannot submit the application on behalf of the owner**.
+
+### Owner approval flow
+
+```text
+Citizen
+   ↓
+Creates delegated task
+   ↓
+Generates secure time-limited link
+   ↓
+Trusted helper fills required information
+   ↓
+Application becomes "Pending Owner Approval"
+   ↓
+Citizen reviews submitted information
+   ↓
+     ┌───────────────┐
+     │               │
+  APPROVE         REJECT / EDIT
+     │               │
+     ↓               ↓
+Submit          Return to Draft
+```
+
+### Why this matters
+
+It preserves the convenience of asking someone for help while keeping the **citizen in control of final submission**.
+
+---
+
+# 5. 🔔 Proactive Expiry Reminders
+
+Government services should not only respond when citizens ask.
+
+They should also help citizens avoid preventable problems.
+
+Once a vehicle is linked, Parivahan Path surfaces upcoming expiries such as:
+
+* PUC
+* Insurance
+* RC-related renewals
+* Driving Licence-related deadlines
+
+### Urgency hierarchy
+
+```text
+≤ 7 days
+   ↓
+URGENT
+Prominent alert
+
+8–30 days
+   ↓
+UPCOMING
+Standard reminder
+```
+
+Citizens can also enable reminders ahead of the actual deadline.
+
+### The principle
+
+> **The citizen shouldn't have to remember the system.
+> The system should remember for the citizen.**
+
+---
+
+# 6. 📰 Policy & Scheme Visibility
+
+Important government policies and schemes can be difficult for ordinary citizens to discover.
+
+Parivahan Path introduces a dedicated **Announcements** section that brings relevant information closer to the citizen.
+
+Examples include:
+
+* EV incentives and subsidy programs
+* Road-tax related benefits
+* BH-series registration information
+* New transport policies
+* Registration-related updates
+
+Instead of expecting citizens to search through circulars and notifications, relevant information is surfaced directly in the experience.
+
+---
+
+# 7. 🤖 Grounded AI Assistant
+
+Parivahan Path includes an AI assistant designed around the citizen's **actual application context**.
+
+It can help answer questions such as:
+
+> "Why is my application still pending?"
+
+> "Which documents do I need?"
+
+> "Why do I need Form 1-A?"
+
+> "Am I eligible for this scheme?"
+
+> "What do I need to do next?"
+
+The goal is not to create another generic chatbot.
+
+The assistant is designed to work with:
+
+* Application state
+* Workflow context
+* Eligibility information
+* Document requirements
+* Policy and scheme information
+
+### From:
+
+> Generic FAQ chatbot
+
+### To:
+
+> **Context-aware citizen assistance**
+
+---
+
+# 8. 📍 Transparent Application Tracking
+
+A status such as:
+
+> **Pending**
+
+doesn't tell a citizen much.
+
+Parivahan Path's tracking experience is designed around four questions:
+
+### 1. What happened?
+
+What stage has the application reached?
+
+### 2. Why?
+
+Why is it currently in this state?
+
+### 3. What's next?
+
+What will happen after this?
+
+### 4. Do I need to act?
+
+Does the citizen need to upload, correct, approve, or do anything else?
+
+The goal is to transform:
+
+```text
+Pending
+```
+
+into:
+
+```text
+Current Stage
+     ↓
+What happened
+     ↓
+Why
+     ↓
+What's next
+     ↓
+Citizen action required?
+```
+
+---
+
+# 9. 🌐 Multilingual & Accessible by Design
+
+Government services should be usable regardless of:
+
+* Language
+* Age
+* Digital literacy
+* Accessibility needs
+
+Parivahan Path supports **13 Indian languages**:
+
+* English
+* Hindi
+* Tamil
+* Telugu
+* Marathi
+* Bengali
+* Gujarati
+* Kannada
+* Punjabi
+* Odia
+* Malayalam
+* Assamese
+* Other supported regional language flows within the prototype
+
+### Accessibility features
+
+* Font resizing
+* Screen-reader-friendly structure
+* Keyboard-friendly navigation
+* Light / Dark mode
+* Clear visual hierarchy
+* Accessible interaction patterns
+* UX4G-oriented design principles
+
+---
+
+# 🏛️ UX4G-Oriented Design
+
+Parivahan Path follows the principles of the **UX4G Design System** to create a more consistent government-service experience.
+
+The interface focuses on:
+
+* Accessibility
+* Clear hierarchy
+* Consistent components
+* Citizen-centric language
+* Strong contrast
+* Responsive layouts
+* Predictable interactions
+* Reduced cognitive load
+
+---
+
+# 🧠 Architecture
+
+At a high level, the platform follows this structure:
+
+```text
+                    ┌──────────────────────┐
+                    │      CITIZEN         │
+                    └──────────┬───────────┘
+                               │
+                               ▼
+                  ┌─────────────────────────┐
+                  │ Intent / Natural        │
+                  │ Language Input          │
+                  └──────────┬──────────────┘
+                             │
+                             ▼
+                  ┌─────────────────────────┐
+                  │ Intent Recognition      │
+                  │ & Service Routing       │
+                  └──────────┬──────────────┘
+                             │
+                             ▼
+                  ┌─────────────────────────┐
+                  │ Guided Government       │
+                  │ Service Workflow        │
+                  └──────────┬──────────────┘
+                             │
+                             ▼
+                  ┌─────────────────────────┐
+                  │ Rules & Validation      │
+                  │ Engine                  │
+                  └──────────┬──────────────┘
+                             │
+                             ▼
+                  ┌─────────────────────────┐
+                  │ Pre-Submission Review   │
+                  └──────────┬──────────────┘
+                             │
+                             ▼
+                  ┌─────────────────────────┐
+                  │ Citizen Approval /      │
+                  │ Submission              │
+                  └──────────┬──────────────┘
+                             │
+                             ▼
+                  ┌─────────────────────────┐
+                  │ Transparent Tracking     │
+                  └─────────────────────────┘
+```
+
+Supporting services include:
+
+```text
+AI Assistant
+     │
+     ├── Application Context
+     ├── Eligibility
+     ├── Documents
+     └── Policy / Schemes
+
+Delegated Access
+     │
+     ├── Secure Token
+     ├── Helper Workflow
+     └── Owner Approval
+
+Proactive Reminders
+     │
+     ├── Expiry Detection
+     ├── Urgency Classification
+     └── Citizen Notification
+```
+
+---
+
+# 🛠️ Technology Stack
+
+| Layer                    | Technology                                          |
+| ------------------------ | --------------------------------------------------- |
+| **Framework**            | Next.js 15 — App Router                             |
+| **Language**             | TypeScript                                          |
+| **AI / Intelligence**    | Codex-assisted development and product intelligence |
+| **Styling**              | Tailwind CSS                                        |
+| **Design System**        | UX4G-oriented design system                         |
+| **Validation**           | Zod                                                 |
+| **Database**             | MongoDB                                             |
+| **Fallback Storage**     | In-memory fallback                                  |
+| **Internationalization** | Custom i18n engine                                  |
+| **Languages**            | 13 Indian languages                                 |
+| **Deployment**           | Vercel                                              |
+
+---
+
+# 🤖 Role of Codex
+
+Codex was used as a core part of both the **development process** and the product implementation.
+
+It contributed to:
+
+* Intent recognition logic
+* Workflow development
+* Pre-submission validation logic
+* AI assistant implementation
+* Component development
+* Debugging and iteration
+* Application architecture
+* Feature integration
+
+The prototype demonstrates how AI-assisted development can be used to build a citizen-facing public-service experience while keeping the underlying statutory workflow explicit.
+
+---
+
+# 📁 Project Structure
+
+```text
 .
-├── app/                      # Next.js App Router pages & routes
-├── components/                # UI components (delegate modals, reminders, chat widget)
-├── data/                     # Intent definitions, form schemas
-├── design/                   # Stitch design references
-├── lib/                      # Translations, utilities
-├── images/ & public/images/  # Static assets
-└── .agents/Skills/ux4g_design/ # UX4G design system reference
-🔒 Honesty & Data Disclosure
+├── app/
+│   ├── delegate/
+│   │   └── [token]/
+│   ├── applications/
+│   ├── track/
+│   └── ...
+│
+├── components/
+│   ├── chat-widget.tsx
+│   ├── delegate-help-modal.tsx
+│   ├── delegate-approval-modal.tsx
+│   ├── proactive-reminders.tsx
+│   ├── flow-ui.tsx
+│   └── ...
+│
+├── data/
+│   ├── intents.json
+│   ├── forms.ts
+│   └── ...
+│
+├── design/
+│   └── stitch_parivahan_path_...
+│
+├── lib/
+│   ├── translations.ts
+│   └── ...
+│
+├── images/
+│
+├── public/
+│   └── images/
+│
+├── agents/
+│   └── Skills/
+│       └── ux4g_design/
+│
+├── next.config.ts
+├── tailwind.config.ts
+├── tsconfig.json
+├── package.json
+└── README.md
+```
 
-In line with the hackathon's honesty requirements:
+---
 
-All personal data, documents, and payment flows use synthetic/mock data only
-No real Aadhaar numbers, PAN details, OTPs, or payment credentials are used or stored
-No official government logos, emblems, or branding implying approval or partnership are used
-Where live government integration (e.g. DigiLocker, UPI) would be required in production, the flow is clearly simulated and labeled
-🧭 What This Is — and Isn't
+# ⚙️ Getting Started
 
-We are not rebuilding the RTO system. We're showing that a complex public service can become clearer, more predictable, and more human — one citizen journey at a time.
+## Prerequisites
 
-👥 Contributors
-Aditya4453
-justsamridhi
-📄 License
+Make sure you have installed:
 
-Built for Build What Moves India — a hackathon prototype, not for production or commercial use.
+* Node.js 18+
+* npm
+* MongoDB (optional — the prototype includes an in-memory fallback)
+
+---
+
+## Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/Aditya4453/Build_What.git
+```
+
+Navigate into the project:
+
+```bash
+cd Build_What
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+---
+
+## Environment Variables
+
+Create a `.env.local` file if your local configuration requires environment variables.
+
+Example:
+
+```env
+MONGODB_URI=your_mongodb_connection_string
+```
+
+> The application includes an in-memory fallback for environments where MongoDB is unavailable.
+
+---
+
+## Run Development Server
+
+```bash
+npm run dev
+```
+
+Open:
+
+```text
+http://localhost:3000
+```
+
+---
+
+# 🧪 Build & Validation
+
+The prototype is designed with strict TypeScript checking.
+
+Run:
+
+```bash
+npx tsc --noEmit
+```
+
+Build the production application:
+
+```bash
+npm run build
+```
+
+Start the production build:
+
+```bash
+npm start
+```
+
+---
+
+# 🔐 Honesty & Data Disclosure
+
+This project follows the hackathon's requirement for transparent use of data.
+
+### Synthetic data only
+
+The prototype does **not** use real citizen personal information.
+
+No real:
+
+* Aadhaar numbers
+* PAN details
+* OTPs
+* Payment credentials
+* Personal identity documents
+
+are used or stored as part of the demonstration.
+
+### Government integrations
+
+Where a real production implementation would require services such as:
+
+* DigiLocker
+* UPI
+* Government databases
+* Official authentication systems
+* Live Parivahan APIs
+
+the prototype uses **synthetic/mock flows**.
+
+These are clearly represented as prototype functionality rather than being presented as live government integrations.
+
+### Government branding
+
+The project does not claim official Government of India or MoRTH approval, partnership, or endorsement.
+
+---
+
+# 📌 Prototype Scope
+
+Parivahan Path is **not attempting to replace or rebuild the underlying RTO infrastructure**.
+
+The prototype focuses on the **citizen experience layer**:
+
+```text
+Existing Government Infrastructure
+             │
+             ▼
+      ┌───────────────┐
+      │ Parivahan Path│
+      │ Citizen Layer │
+      └───────┬───────┘
+              │
+              ▼
+      Simpler Citizen Journey
+```
+
+The objective is to demonstrate how existing government services could become:
+
+* Easier to discover
+* Easier to understand
+* Easier to complete
+* Easier to track
+* More accessible
+* More predictable
+* Safer to delegate
+
+---
+
+# 💡 What Makes Parivahan Path Different?
+
+Parivahan Path is not simply a visual redesign.
+
+The prototype changes the **interaction model**.
+
+### Traditional experience
+
+```text
+Know the service
+      ↓
+Find the correct portal
+      ↓
+Understand government terminology
+      ↓
+Choose the correct form
+      ↓
+Understand eligibility
+      ↓
+Fill everything
+      ↓
+Submit
+      ↓
+Hope nothing went wrong
+      ↓
+Check status manually
+```
+
+### Parivahan Path
+
+```text
+Tell us what you need
+      ↓
+Understand your situation
+      ↓
+Show only what applies
+      ↓
+Validate before submission
+      ↓
+Review
+      ↓
+Submit
+      ↓
+Track transparently
+      ↓
+Get reminders before the next deadline
+```
+
+---
+
+# 🏆 Hackathon Focus
+
+Built for:
+
+## **Build What Moves India**
+
+The project explores how AI-assisted development and citizen-centric design can improve access to India's public transport infrastructure.
+
+### Three flagship innovations
+
+#### 🤝 Delegated Access
+
+Helping citizens get assistance **without sharing credentials**.
+
+#### 🔔 Proactive Reminders
+
+Moving from a system citizens must remember to a system that **remembers for citizens**.
+
+#### 🤖 Policy-Aware AI Assistance
+
+Turning complex government information into **contextual, understandable answers**.
+
+Together with intent-driven navigation, pre-submission validation, transparent tracking, multilingual accessibility, and simplified statutory workflows, these features form the core of Parivahan Path.
+
+---
+
+# 🧭 What This Is — And What It Isn't
+
+### This IS:
+
+* A working hackathon prototype
+* A citizen-centric service experience
+* An AI-assisted public-service interface
+* A demonstration of simplified government workflows
+* A prototype using real statutory form structures
+* A demonstration using synthetic/mock data
+
+### This IS NOT:
+
+* An official Government of India application
+* An official MoRTH product
+* A replacement for Vahan or Sarathi
+* A live government database
+* A production payment system
+* A source of real citizen records
+
+---
+
+# 👥 Contributors
+
+### Aditya4453
+
+**Aditya**
+
+### justsamridhi
+
+**Samridhi**
+
+Built collaboratively for **Build What Moves India**.
+
+---
+
+# 📄 License
+
+This project was built for the **Build What Moves India hackathon**.
+
+It is a **hackathon prototype and is not intended for production or commercial use**.
+
+Unless otherwise specified, the project and its source code are provided for hackathon evaluation, demonstration, and educational purposes.
+
+---
+
+# 🇮🇳 Parivahan Path
+
+> **Government services should adapt to citizens — not the other way around.**
+
+**One citizen. One intent. One guided journey.**
+
+[🚀 Try the Live Demo →](https://buildwhat-seven.vercel.app/)
+
+[💻 View the Repository →](https://github.com/Aditya4453/Build_What)
+
+```
+```
