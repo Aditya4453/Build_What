@@ -100,10 +100,8 @@ export function Ux4gHeader() {
               <circle cx="450" cy="300" r="80" fill="none" stroke="#000080" strokeWidth="6" />
               <circle cx="450" cy="300" r="14" fill="#000080" />
             </svg>
-            <span className="font-semibold tracking-wide text-slate-100 flex items-center gap-1.5">
-              <span className="hidden sm:inline">भारत सरकार</span>
-              <span className="hidden sm:inline text-slate-400">|</span>
-              <span>{t.nav.governmentOfIndia}</span>
+            <span className="font-bold tracking-wide text-slate-100 flex items-center gap-1.5">
+              <span>Hackathon Prototype</span>
             </span>
           </div>
 

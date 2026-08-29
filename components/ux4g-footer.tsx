@@ -376,7 +376,24 @@ export function Ux4gFooter() {
               <ArrowUp size={14} />
             </button>
             <p className="text-[11px] text-slate-400">
-              © 2026 - Copyright <strong className="text-slate-200">Parivahan Path</strong>. All rights reserved. Powered by NeGD | MeitY | MoRTH Government of India.
+              Designed by{" "}
+              <a
+                href="https://github.com/Aditya4453"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold text-slate-200 hover:text-white hover:underline transition-colors"
+              >
+                Aditya Modani
+              </a>{" "}
+              and{" "}
+              <a
+                href="https://github.com/justsamridhi"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold text-slate-200 hover:text-white hover:underline transition-colors"
+              >
+                Samridhi Gupta
+              </a>
             </p>
           </div>
 

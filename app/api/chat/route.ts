@@ -63,28 +63,72 @@ export async function POST(request: Request) {
       recentStatusHistory: recentHistory
     };
 
-    const systemPrompt = `You are a helpful citizen support AI assistant for the Parivahan Path portal.
+    const systemPrompt = `You are a helpful, courteous citizen support AI assistant for the Parivahan Path portal.
 You have access to the citizen's current application context below. 
 
-Rules:
-1. Answer the citizen's question accurately using ONLY facts from the provided context.
-2. If the user asks about something not mentioned in the context (like other services, other dates, or custom fees), clearly say you don't know and reference only available context.
-3. NEVER invent or hallucinate any dates, statuses, reference IDs, or other details.
-4. Keep your answers brief, professional, and citizen-friendly.
-5. If the application is approved, help celebrate or guide them on next steps. If payment is pending/processing, instruct them not to pay twice.
+Formatting & Response Rules:
+1. Always structure your responses clearly with clean paragraphs and distinct bullet points on new lines.
+2. Answer accurately using ONLY facts from the provided context.
+3. If the user asks about something not mentioned in the context (like other services or unrecorded dates), clearly say you don't know and reference only available context.
+4. NEVER invent or hallucinate dates, statuses, reference IDs, or details.
+5. Keep your answers brief, professional, and citizen-friendly.
 
 Context:
 ${JSON.stringify(context, null, 2)}`;
 
-    const apiKey = process.env.OPENAI_API_KEY;
+    const geminiApiKey = process.env.GEMINI_API_KEY;
+    const openaiApiKey = process.env.OPENAI_API_KEY;
 
-    if (apiKey) {
+    // 1. Try Google Gemini API first
+    if (geminiApiKey) {
+      try {
+        const geminiRes = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${geminiApiKey}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              system_instruction: {
+                parts: [{ text: systemPrompt }],
+              },
+              contents: [
+                {
+                  role: "user",
+                  parts: [{ text: message }],
+                },
+              ],
+              generationConfig: {
+                temperature: 0.1,
+                maxOutputTokens: 1000,
+              },
+            }),
+          }
+        );
+
+        if (geminiRes.ok) {
+          const geminiData = await geminiRes.json();
+          const answer = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+          if (answer) {
+            return Response.json({ answer, provider: "gemini" });
+          }
+        } else {
+          console.warn("Gemini API returned non-OK status:", geminiRes.status, await geminiRes.text());
+        }
+      } catch (geminiErr) {
+        console.error("Gemini API call failed, attempting fallback:", geminiErr);
+      }
+    }
+
+    // 2. Secondary fallback to OpenAI if configured
+    if (openaiApiKey) {
       try {
         const response = await fetch("https://api.openai.com/v1/chat/completions", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${apiKey}`
+            "Authorization": `Bearer ${openaiApiKey}`
           },
           body: JSON.stringify({
             model: "gpt-4o-mini",
@@ -101,12 +145,11 @@ ${JSON.stringify(context, null, 2)}`;
           const result = await response.json();
           const answer = result.choices?.[0]?.message?.content?.trim();
           if (answer) {
-            return Response.json({ answer });
+            return Response.json({ answer, provider: "openai" });
           }
         }
-        console.warn("OpenAI API response error, using fallback logic.");
-      } catch (apiErr) {
-        console.error("OpenAI API fetch failed, using fallback logic.", apiErr);
+      } catch (openAiErr) {
+        console.error("OpenAI fallback failed:", openAiErr);
       }
     }
 
